@@ -1,7 +1,7 @@
 #ifndef CONFIGURATION_PRUSA_H
 #define CONFIGURATION_PRUSA_H
 
-#include <limits.h>		   
+#include <limits.h>
 /*------------------------------------
  GENERAL SETTINGS
  *------------------------------------*/
@@ -15,7 +15,7 @@
 #define DEVELOPER
 
 // Printer name
-#define CUSTOM_MENDEL_NAME "Zaribo MK3-220"
+#define CUSTOM_MENDEL_NAME "Zaribo MK3-320"
 
 // Electronics
 #define MOTHERBOARD BOARD_EINSY_1_0a
@@ -46,7 +46,7 @@
 
 // Direction inverting
 #define INVERT_X_DIR 1    // for Mendel set to 0, for Orca set to 1
-#define INVERT_Y_DIR 1    // for Mendel set to 1, for Orca set to 0
+#define INVERT_Y_DIR 0    // for Mendel set to 1, for Orca set to 0
 #define INVERT_Z_DIR 1     // for Mendel set to 0, for Orca set to 1
 #define INVERT_E0_DIR 0   // for direct drive extruder v9 set to 1, for geared extruder set to 0
 #define INVERT_E1_DIR 0    // for direct drive extruder v9 set to 1, for geared extruder set to 0
@@ -62,7 +62,7 @@
 #define X_MIN_POS 0
 #define Y_MAX_POS 212.5
 #define Y_MIN_POS -4 //orig -4
-#define Z_MAX_POS 220
+#define Z_MAX_POS 320
 #define Z_MIN_POS 0.15
 
 // Canceled home position
@@ -134,7 +134,7 @@
 
 // Filament sensor
 #define FILAMENT_SENSOR
-#define PAT9125	   
+#define PAT9125
 
 // Backlash - 
 //#define BACKLASH_X
@@ -388,7 +388,7 @@
 
 // Motor Current settings for Einsy/tmc = 0..63
 #define MOTOR_CURRENT_PWM_RANGE 63
-
+															  
 /*------------------------------------
  BED SETTINGS
  *------------------------------------*/
