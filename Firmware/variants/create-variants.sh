@@ -32,6 +32,7 @@
 #                          Also implementing Bondtech Mosquito MMU length settings
 # 14 Nov 2019, 3d-gussner, Merge OLED as default
 # 15 Nov 2019, 3d-gussner, Fix Bondtech Steps on MK25 and MK25s. Thanks to Bernd pointing it out.
+# 30 Dec 2019, 3d-gussner, Fix MK2.5 y motor direction
 ################################################################################
 
 # Constants
@@ -92,8 +93,10 @@ for TYPE in ${TypesArray[@]}; do
 		fi
 		# Modify printer name
 		sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Prusa i3 '$PRUSA_TYPE'"*/#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$HEIGHT'"/g' ${VARIANT}
-		# Inverted Y-Motor
-		sed -i -e "s/^#define INVERT_Y_DIR 0*/#define INVERT_Y_DIR 1/g" ${VARIANT}
+		# Inverted Y-Motor only for MK3
+		if [ $BOARD == "EINSy10a" ]; then
+			sed -i -e "s/^#define INVERT_Y_DIR 0*/#define INVERT_Y_DIR 1/g" ${VARIANT}
+		fi
 		# Printer Height
 		sed -i -e "s/^#define Z_MAX_POS 210*/#define Z_MAX_POS ${HEIGHT}/g" ${VARIANT}
 		# Disable PSU_Delta
