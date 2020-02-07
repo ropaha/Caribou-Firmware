@@ -50,17 +50,9 @@
 "Are left and right Z~carriages all up?"
 "Zijn beide Z wagen heelemaal boven?"
 
-#MSG_AUTO_DEPLETE_ON c=17 r=1
-"SpoolJoin    [on]"
-"SpoolJoin   [aan]"
-
-#
-"SpoolJoin   [N/A]"
-"SpoolJoin   [N/V]"
-
-#MSG_AUTO_DEPLETE_OFF c=17 r=1
-"SpoolJoin   [off]"
-"SpoolJoin   [uit]"
+#MSG_AUTO_DEPLETE c=17 r=1
+"SpoolJoin"
+"\x00"
 
 #MSG_AUTO_HOME
 "Auto home"
@@ -174,21 +166,13 @@
 "Copy selected language?"
 "Geselecteerde taal kopieren?"
 
-#MSG_CRASHDETECT_ON
-"Crash det.   [on]"
-"Crashdet.   [aan]"
+#MSG_CRASHDETECT
+"Crash det."
+"Crashdet."
 
 #
 "Choose a filament for the First Layer Calibration and select it in the on-screen menu."
 "Kies een filament voor de kalibratie van de eerste laag en selecteer deze in het schermmenu."
-
-#MSG_CRASHDETECT_NA
-"Crash det.  [N/A]"
-"Crashdet.   [N/V]"
-
-#MSG_CRASHDETECT_OFF
-"Crash det.  [off]"
-"Crashdet.   [uit]"
 
 #MSG_CRASH_DETECTED c=20 r=1
 "Crash detected."
@@ -274,17 +258,9 @@
 "Fail stats MMU"
 "MMU-Fouten"
 
-#MSG_FSENS_AUTOLOAD_ON c=17 r=1
-"F. autoload  [on]"
-"F.autoladen [aan]"
-
-#MSG_FSENS_AUTOLOAD_NA c=17 r=1
-"F. autoload [N/A]"
-"F.autoladen [N/V]"
-
-#MSG_FSENS_AUTOLOAD_OFF c=17 r=1
-"F. autoload [off]"
-"F.autoladen [uit]"
+#MSG_FSENSOR_AUTOLOAD
+"F. autoload"
+"F. autoladen"
 
 #
 "Fail stats"
@@ -298,25 +274,13 @@
 "Fan test"
 "Fan test"
 
-#MSG_FANS_CHECK_ON c=17 r=1
-"Fans check   [on]"
-"Fans check  [aan]"
+#MSG_FANS_CHECK
+"Fans check"
+"Fans check"
 
-#MSG_FANS_CHECK_OFF c=17 r=1
-"Fans check  [off]"
-"Fans check  [uit]"
-
-#MSG_FSENSOR_ON
-"Fil. sensor  [on]"
-"Fil. sensor [aan]"
-
-#MSG_FSENSOR_NA
-"Fil. sensor [N/A]"
-"Fil. sensor [N/V]"
-
-#MSG_FSENSOR_OFF
-"Fil. sensor [off]"
-"Fil. sensor [uit]"
+#MSG_FSENSOR
+"Fil. sensor"
+"\x00"
 
 #
 "Filam. runouts"
@@ -401,10 +365,6 @@
 #MSG_WIZARD_WELCOME c=20 r=7
 "Hi, I am your Original Prusa i3 printer. Would you like me to guide you through the setup process?"
 "Hallo, ik ben uw Original Prusa i3 printer. Zullen we beginnen met het installatieproces?"
-
-#MSG_WIZARD_WELCOME c=20 r=7
-"Hi, I am your Zaribo printer. Would you like me to guide you through the setup process?"
-"Hallo, ik ben uw Zaribo printer. Zullen we beginnen met het installatieproces?"
 
 #MSG_PRUSA3D_HOWTO
 "howto.prusa3d.com"
@@ -582,13 +542,17 @@
 "MMU OK. Resuming..."
 "MMU OK. Hervatten..."
 
-#MSG_STEALTH_MODE_OFF
-"Mode     [Normal]"
-"Stand   [Normaal]"
+#MSG_MODE
+"Mode"
+"Stand"
 
-#MSG_SILENT_MODE_ON
-"Mode     [silent]"
-"Stand      [stil]"
+#MSG_NORMAL
+"Normaal"
+"\x00"
+
+#MSG_SILENT
+"Silent"
+"Stil"
 
 #
 "MMU needs user attention."
@@ -598,17 +562,17 @@
 "MMU power fails"
 "MMU stroomstor."
 
-#MSG_STEALTH_MODE_ON
-"Mode    [Stealth]"
-"Stand   [Stealth]"
+#MSG_STEALTH
+"Stealth"
+"\x00"
 
-#MSG_AUTO_MODE_ON
-"Mode [auto power]"
-"Mode[automatisch]"
+#MSG_AUTO_POWER
+"Auto power"
+"\x00"
 
-#MSG_SILENT_MODE_OFF
-"Mode [high power]"
-"Stand      [hoog]"
+#MSG_HIGH_POWER
+"High power"
+"Hoog verm."
 
 #
 "MMU2 connected"
@@ -642,7 +606,7 @@
 "No SD card"
 "Geen SD kaart"
 
-#
+#MSG_NA
 "N/A"
 "N/V"
 
@@ -842,74 +806,6 @@
 "Please load filament first."
 "Laad a.u.b. eerst filament."
 
-#WELCOME_MSG c=20
-"Prusa i3 MK2.5"
-"\x00"
-
-#WELCOME_MSG c=20
-"Prusa i3 MK3"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK2.5-320"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK2.5-220"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK3-320"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK3-220"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK2.5-420"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK3-420"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK3S-220"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK3S-320"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK3S-420"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK3-BMG-220"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK3-BMG-320"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK3-BMG-420"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK3S-BMG-220"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK3S-BMG-320"
-"\x00"
-
-#WELCOME_MSG c=20
-"Zaribo MK3S-BMG-420"
-"\x00"
-
 #MSG_PRUSA3D
 "prusa3d.com"
 "\x00"
@@ -927,7 +823,7 @@
 "Verwijder de oude filament en druk op de knop om nieuwe filament te laden."
 
 #
-"Prusa i3 MK3S"
+"Prusa i3 MK3S OK."
 "\x00"
 
 #MSG_CALIBRATE_BED_RESET
@@ -950,25 +846,21 @@
 "Right side[um]"
 "Recht.kant[um]"
 
-#MSG_SECOND_SERIAL_ON c=17 r=1
-"RPi port     [on]"
-"RPi port    [aan]"
-
-#MSG_SECOND_SERIAL_OFF c=17 r=1
-"RPi port    [off]"
-"RPi port    [uit]"
+#MSG_RPI_PORT
+"RPi port"
+"\x00"
 
 #MSG_WIZARD_RERUN c=20 r=7
 "Running Wizard will delete current calibration results and start from the beginning. Continue?"
 "Starten van de Wizard verwijdert de huidige kalibreringsresultaten en begint vanaf het begin. Doorgaan?"
 
-#MSG_TOSHIBA_FLASH_AIR_COMPATIBILITY_OFF c=19 r=1
-"SD card  [normal]"
-"SD card [normaal]"
+#MSG_SD_CARD
+"SD card"
+"SD card"
 
-#MSG_TOSHIBA_FLASH_AIR_COMPATIBILITY_ON c=19 r=1
-"SD card [flshAir]"
-"SD Karte[flshAir]"
+#MSG_TOSHIBA_FLASH_AIR_COMPATIBILITY
+"FlashAir"
+"\x00"
 
 #
 "Right"
@@ -1030,49 +922,49 @@
 "Some files will not be sorted. Max. No. of files in 1 folder for sorting is 100."
 "Sommige bestanden worden niet gesorteerd omdat het maximum aantal bestanden per map 100 is."
 
-#MSG_SORT_NONE c=17 r=1
-"Sort       [none]"
-"Sortering  [geen]"
+#MSG_SORT
+"Sort"
+"Sort."
 
-#MSG_SORT_TIME c=17 r=1
-"Sort       [time]"
-"Sortering  [tijd]"
+#MSG_NONE
+"None"
+"Geen"
+
+#MSG_SORT_TIME
+"Time"
+"Tijd"
 
 #
 "Severe skew:"
 "Erg scheef:"
 
-#MSG_SORT_ALPHA c=17 r=1
-"Sort   [alphabet]"
-"Sort    [alfabet]"
+#MSG_SORT_ALPHA
+"Alphabet"
+"Alfabet"
 
 #MSG_SORTING c=20 r=1
 "Sorting files"
 "Bestanden sorteren"
 
-#MSG_SOUND_LOUD c=17 r=1
-"Sound      [loud]"
-"Geluid     [hard]"
+#MSG_SOUND_LOUD
+"Loud"
+"Hard"
 
 #
 "Slight skew:"
 "Iets scheef:"
 
-#MSG_SOUND_MUTE c=17 r=1
-"Sound      [mute]"
-"Geluid      [uit]"
+#MSG_SOUND
+"Sound"
+"Geluid"
 
 #
 "Some problem encountered, Z-leveling enforced ..."
 "Er is een probleem opgetreden, Z-kalibratie afgedwongen ..."
 
-#MSG_SOUND_ONCE c=17 r=1
-"Sound      [once]"
-"Geluid  [eenmaal]"
-
-#MSG_SOUND_SILENT c=17 r=1
-"Sound    [silent]"
-"Geluid     [stil]"
+#MSG_SOUND_ONCE
+"Once"
+"Eenmaal"
 
 #MSG_SPEED
 "Speed"
@@ -1110,21 +1002,14 @@
 "Select filament:"
 "Kies filament:"
 
-#MSG_TEMP_CALIBRATION c=20 r=1
-"Temp. cal.          "
-"Tempkalibratie      "
-
-#MSG_TEMP_CALIBRATION_ON c=20 r=1
-"Temp. cal.   [on]"
-"Tempkal.    [aan]"
+#MSG_TEMP_CALIBRATION c=12 r=1
+"Temp. cal."
+"Tempkalib."
 
 #
 "Select temperature which matches your material."
 "Selecteer de temperatuur die overeenkomt met uw materiaal."
 
-#MSG_TEMP_CALIBRATION_OFF c=20 r=1
-"Temp. cal.  [off]"
-"Tempkal.    [uit]"
 
 #MSG_CALIBRATION_PINDA_MENU c=17 r=1
 "Temp. calibration"
@@ -1311,8 +1196,12 @@
 "Y-correctie:"
 
 #MSG_OFF
-" [off]"
-" [uit]"
+"Off"
+"Uit"
+
+#MSG_ON
+"On"
+"Aan"
 
 #
 "Back"
@@ -1330,16 +1219,16 @@
 "FINDA:"
 "\x00"
 
-#
-"Firmware   [none]"
-"Firmware   [geen]"
+#MSG_FIRMWARE
+"Firmware"
+"\x00"
 
-#
-"Firmware [strict]"
-"Firmware [strikt]"
+#MSG_STRICT
+"Strict"
+"Strikt"
 
-#
-"Firmware   [warn]"
+#MSG_WARN
+"Warn"
 "\x00"
 
 #
@@ -1350,24 +1239,12 @@
 "IR:"
 "\x00"
 
-#
-"Magnets comp.[N/A]"
-"Magnet. comp.[N/V]"
+#MSG_MAGNETS_COMP
+"Magnets comp."
+"Magnet. comp."
 
-#
-"Magnets comp.[Off]"
-"Magnet. comp.[Uit]"
-
-#
-"Magnets comp. [On]"
-"Magnet. comp.[Aan]"
-
-#
-"Mesh         [3x3]"
-"\x00"
-
-#
-"Mesh         [7x7]"
+#MSG_MESH
+"Mesh"
 "\x00"
 
 #
@@ -1378,53 +1255,21 @@
 "MK3S firmware detected on MK3 printer"
 "MK3S-firmware op MK3-printer ontdekt"
 
-#
-"MMU Mode [Normal]"
-"MMU Mod.[Normaal]"
-
-#
-"MMU Mode[Stealth]"
-"MMU Mod.[Stealth]"
+#MSG_MMU_MODE
+"MMU Mode"
+"MMU Mod"
 
 #
 "Mode change in progress ..."
 "Moduswijziging bezig..."
 
-#
-"Model      [none]"
-"Model      [geen]"
+#MSG_MODEL
+"Model"
+"\x00"
 
-#
-"Model    [strict]"
-"Model    [strikt]"
-
-#
-"Model      [warn]"
-"Model    [alarm.]"
-
-#
-"Nozzle d.  [0.25]"
-"Tuit d.    [0.25]"
-
-#
-"Nozzle d.  [0.40]"
-"Tuit d.    [0.40]"
-
-#
-"Nozzle d.  [0.60]"
-"Tuit d.    [0.60]"
-
-#
-"Nozzle     [none]"
-"Tuit       [geen]"
-
-#
-"Nozzle   [strict]"
-"Tuit     [strikt]"
-
-#
-"Nozzle     [warn]"
-"Tuit     [alarm.]"
+#MSG_NOZZLE_DIAMETER
+"Nozzle d."
+"Tuit d."
 
 #
 "G-code sliced for a different level. Continue?"
@@ -1486,9 +1331,9 @@
 "Sheet"
 "Plaat"
 
-#
-"Sound    [assist]"
-"Geluid   [assist]"
+#MSG_SOUND_BLIND
+"Assist"
+"\x00"
 
 #
 "Steel sheets"
@@ -1498,15 +1343,7 @@
 "Z-correct:"
 "Z-correctie:"
 
-#
-"Z-probe nr.    [1]"
-"Z-probe nr.    [1]"
 
-#
-"Z-probe nr.    [3]"
-"Z-probe nr.    [3]"
-
-#
-"Z-probe nr.    [5]"
-"Z-probe nr.    [5]"
-
+#MSG_Z_PROBE_NR
+"Z-probe nr."
+"\x00"

@@ -7,6 +7,7 @@
 # Arduino main folder:
 if [ -z "$ARDUINO" ]; then
     export ARDUINO=C:/arduino-1.8.5
+    #export ARDUINO=D:/Data/Github/Zaribo_/Software/Zaribo-Firmware/PF-build-env-1.0.6/1.8.5-1.0.3-windows-64
 fi
 #
 # Arduino builder:

@@ -94,9 +94,9 @@ uint8_t lcd_escape[8];
 #endif
 
 static void lcd_display(void);
-static void lcd_no_display(void);
 
 #if 0
+static void lcd_no_display(void);
 static void lcd_no_cursor(void);
 static void lcd_cursor(void);
 static void lcd_no_blink(void);
@@ -294,14 +294,16 @@ void lcd_home(void)
 void lcd_display(void)
 {
     lcd_displaycontrol |= LCD_DISPLAYON;
-    lcd_command(LCD_DISPLAYCONTROL | lcd_displaycontrol, 1600);
+    lcd_command(LCD_DISPLAYCONTROL | lcd_displaycontrol);
 }
 
+#if 0
 void lcd_no_display(void)
 {
 	lcd_displaycontrol &= ~LCD_DISPLAYON;
-	lcd_command(LCD_DISPLAYCONTROL | lcd_displaycontrol, 1600);
+	lcd_command(LCD_DISPLAYCONTROL | lcd_displaycontrol);
 }
+#endif
 
 #ifdef VT100 //required functions for VT100
 // Turns the underline cursor on/off
