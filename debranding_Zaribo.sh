@@ -13,6 +13,9 @@ fi
 	sed -i -e 's/"FIRMWARE_NAME:Zaribo-Firmware "/"FIRMWARE_NAME:Prusa-Firmware "/g' $SCRIPT_PATH/Firmware/Marlin_main.cpp
 	# reset FIRMWARE_URL
 	sed -i -e "s/https:\/\/github.com\/Zaribo\/Zaribo-Firmware/https:\/\/github.com\/prusa3d\/Prusa-Firmware/g" $SCRIPT_PATH/Firmware/Marlin_main.cpp
+	# readd forum and help
+	sed -i -e 's/\/\/MENU_ITEM_BACK_P(_i("forum.prusa3d.com"))*/MENU_ITEM_BACK_P(_i("forum.prusa3d.com"))/g' $SCRIPT_PATH/Firmware/ultralcd.cpp
+	sed -i -e 's/\/\/MENU_ITEM_BACK_P(_i("howto.prusa3d.com"))*/MENU_ITEM_BACK_P(_i("howto.prusa3d.com"))/g' $SCRIPT_PATH/Firmware/ultralcd.cpp
 	# reset MSG_WIZZARD_WELCOME and WELCOME_MSG
 	sed -i -e "s/Zaribo/Original Prusa i3/g" $SCRIPT_PATH/Firmware/ultralcd.cpp
 	sed -i -e "s/Zaribo/Original Prusa i3/g" $SCRIPT_PATH/lang/lang_en.txt
