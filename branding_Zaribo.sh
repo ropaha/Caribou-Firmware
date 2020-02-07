@@ -14,6 +14,7 @@ fi
 	# set FIRMWARE_URL
 	sed -i -e "s/https:\/\/github.com\/prusa3d\/Prusa-Firmware/https:\/\/github.com\/Zaribo\/Zaribo-Firmware/g" $SCRIPT_PATH/Firmware/Marlin_main.cpp
 	# set MSG_WIZZARD_WELCOME and WELCOME_MSG
+	sed -i -e "s/Original Prusa i3/Zaribo/g" $SCRIPT_PATH/Firmware/ultralcd.cpp
 	sed -i -e "s/Original Prusa i3/Zaribo/g" $SCRIPT_PATH/lang/lang_en.txt
 	sed -i -e "s/Original Prusa i3/Zaribo/g" $SCRIPT_PATH/lang/lang_en_cz.txt
 	sed -i -e "s/Original Prusa i3/Zaribo/g" $SCRIPT_PATH/lang/lang_en_de.txt
