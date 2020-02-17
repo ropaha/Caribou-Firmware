@@ -120,8 +120,9 @@
 # 15 Dec 2019, 3d-gussner, Prepare for switch to Prusa3d/PF-build-env repository
 # 15 Dec 2019, 3d-gussner, Fix Audrino user preferences for the chosen board.
 # 17 Dec 2019, 3d-gussner, Fix "timer0_fract = 0" warning by using Arduino_boards v1.0.3
-# 07 Feb 2019, 3d-gussner, Added branding_Zaribo.sh and debranding_Zaribo.sh scripts to keep firmware as close as possible to origin
+# 07 Feb 2020, 3d-gussner, Added branding_Zaribo.sh and debranding_Zaribo.sh scripts to keep firmware as close as possible to origin
 #                          this should help with merge issues we had in the past.
+# 17 Feb 2020, 3d-gussner, Add aarch64 beat support to compile on Odroid-C1/2 RPi4+ 
 #### Start check if OSTYPE is supported
 OS_FOUND=$( command -v uname)
 
@@ -161,6 +162,9 @@ elif [ $TARGET_OS == "linux" ]; then
 	elif [[ $(uname -m) == "i386" || $(uname -m) == "i686" ]]; then
 		echo "$(tput setaf 2)Linux 32-bit found$(tput sgr0)"
 		Processor="32"
+	elif [ $(uname -m) == "aarch64" ]; then
+		echo "$(tput setaf 2)Linux aarch64 bit found$(tput sgr0)"
+		Processor="aarch64"
 	else
 		echo "$(tput setaf 1)Unsupported OS: Linux $(uname -m)"
 		echo "Please refer to the notes of build.sh$(tput sgr0)"
@@ -218,7 +222,11 @@ fi
 
 
 #### Set build environment 
-ARDUINO_ENV="1.8.5"
+if [ $Processor == "aarch64" ]; then
+	ARDUINO_ENV="1.8.9" #Beta test on Odroid-C2
+else
+	ARDUINO_ENV="1.8.5"
+fi
 BUILD_ENV="1.0.6"
 BOARD="prusa_einsy_rambo"
 BOARD_PACKAGE_NAME="PrusaResearch"
