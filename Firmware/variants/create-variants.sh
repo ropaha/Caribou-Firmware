@@ -220,7 +220,7 @@ for TYPE in ${BMQArray[@]}; do
 		# Enable Slice High Temperature Thermistor
 		sed -i -e "s/\/\/#define SLICE_HT_EXTRUDER*/#define SLICE_HT_EXTRUDER/g" ${VARIANT}
 		# Change mintemp for Slice High Temperature Thermistor
-		sed -i -e "s/#define HEATER_0_MINTEMP 15*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
+		sed -i -e "s/#define HEATER_0_MINTEMP 10*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
 	done
 	echo
 done
@@ -283,7 +283,7 @@ for TYPE in ${BMGOArray[@]}; do
 		# Enable Slice High Temperature Thermistor
 		sed -i -e "s/\/\/#define SLICE_HT_EXTRUDER*/#define SLICE_HT_EXTRUDER/g" ${VARIANT}
 		# Change mintemp for Slice High Temperature Thermistor
-		sed -i -e "s/#define HEATER_0_MINTEMP 15*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
+		sed -i -e "s/#define HEATER_0_MINTEMP 10*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
 	done
 	echo
 done
