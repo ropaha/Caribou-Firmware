@@ -33,6 +33,7 @@
 # 14 Nov 2019, 3d-gussner, Merge OLED as default
 # 15 Nov 2019, 3d-gussner, Fix Bondtech Steps on MK25 and MK25s. Thanks to Bernd pointing it out.
 # 30 Dec 2019, 3d-gussner, Fix MK2.5 y motor direction
+# 08 Feb 2020, 3d-gussner, Add Prusa MK25/s and MK3/s with OLED and with/without Bondtech
 ################################################################################
 
 # Constants
@@ -50,6 +51,7 @@ BASE="1_75mm_$TYPE-$BOARD-E3Dv6full.h"
 BMGHeightDiff=-3 #Bondtech extruders are bit higher than stock one
 
 # Arrays
+declare -a CompanyArray=( "Zaribo" "Prusa" )
 declare -a TypesArray=( "MK3" "MK3S" "MK25" "MK25S" )
 declare -a HeightsArray=( 220 320 420)
 declare -a ModArray=( "BE" "BM" "BMM" "BMH" "BMMH")
@@ -57,234 +59,276 @@ declare -a ModArray=( "BE" "BM" "BMM" "BMH" "BMMH")
 
 # Cleanup old Zaribo variants
 ls Zaribo*
+ls Prusa*
 echo " "
 echo "Existing Zaribo varaiants will be deleted. Press CRTL+C to stop"
 sleep 5
 rm Zaribo*
+rm Prusa*
 
 ##### MK25/MK25S/MK3/MK3S Variants
-echo "Start Zaribo"
-for TYPE in ${TypesArray[@]}; do
-	echo "Type: $TYPE"
-	if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
-		BOARD="EINSy10a"
-	elif [[ $TYPE == "MK25" || $TYPE == "MK25S" ]]; then
-		BOARD="RAMBo13a"
-	else
-		echo "Unsupported controller"
-		exit 1
-	fi
-	BASE="1_75mm_$TYPE-$BOARD-E3Dv6full.h"
-	for HEIGHT in ${HeightsArray[@]};
-	do
-		VARIANT="Zaribo_$TYPE-$HEIGHT.h"
-		#echo $BASE
-		#echo $TYPE
-		#echo $HEIGHT
-		echo $VARIANT
-		cp ${BASE} ${VARIANT}
-		# Printer Display Name
-		if [ $TYPE == "MK25" ]; then
-			PRUSA_TYPE="MK2.5"
-		elif [ $TYPE == "MK25S" ]; then
-			PRUSA_TYPE="MK2.5S"
+for COMPANY in ${CompanyArray[@]}; do
+	echo "Start $COMPANY"
+	for TYPE in ${TypesArray[@]}; do
+		echo "Type: $TYPE"
+		if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
+			BOARD="EINSy10a"
+		elif [[ $TYPE == "MK25" || $TYPE == "MK25S" ]]; then
+			BOARD="RAMBo13a"
 		else
-			PRUSA_TYPE=$TYPE
+			echo "Unsupported controller"
+			exit 1
 		fi
-		# Modify printer name
-		sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Prusa i3 '$PRUSA_TYPE'"*/#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$HEIGHT'"/g' ${VARIANT}
-		# Inverted Y-Motor only for MK3
-		if [ $BOARD == "EINSy10a" ]; then
-			sed -i -e "s/^#define INVERT_Y_DIR 0*/#define INVERT_Y_DIR 1/g" ${VARIANT}
+		BASE="1_75mm_$TYPE-$BOARD-E3Dv6full.h"
+		if [ $COMPANY == "Zaribo" ]; then
+			declare -a HeightsArray=( 220 320 420)
+		elif [ $COMPANY == "Prusa" ]; then
+			declare -a HeightsArray=( 210 )
 		fi
-		# Printer Height
-		sed -i -e "s/^#define Z_MAX_POS 210*/#define Z_MAX_POS ${HEIGHT}/g" ${VARIANT}
-		# Disable PSU_Delta
-		sed -i -e "s/^#define PSU_Delta*/\/\/#define PSU_Delta/g" ${VARIANT}
+		for HEIGHT in ${HeightsArray[@]}; do
+			VARIANT="$COMPANY-$TYPE-$HEIGHT.h"
+			#echo $COMPANY
+			#echo $BASE
+			#echo $TYPE
+			#echo $HEIGHT
+			#echo $VARIANT
+			#sleep 10
+			cp ${BASE} ${VARIANT}
+			ls
+			# Printer Display Name
+			if [ $TYPE == "MK25" ]; then
+				PRUSA_TYPE="MK2.5"
+			elif [ $TYPE == "MK25S" ]; then
+				PRUSA_TYPE="MK2.5S"
+			else
+				PRUSA_TYPE=$TYPE
+			fi
+			# Modify printer name
+			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Prusa i3 '$PRUSA_TYPE'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$HEIGHT'"/g' ${VARIANT}
+			if [ $COMPANY == "Zaribo" ]; then
+				# Inverted Y-Motor only for MK3
+				if [ $BOARD == "EINSy10a" ]; then
+					sed -i -e "s/^#define INVERT_Y_DIR 0*/#define INVERT_Y_DIR 1/g" ${VARIANT}
+				fi
+				# Printer Height
+				sed -i -e "s/^#define Z_MAX_POS 210*/#define Z_MAX_POS ${HEIGHT}/g" ${VARIANT}
+				# Disable PSU_Delta
+				sed -i -e "s/^#define PSU_Delta*/\/\/#define PSU_Delta/g" ${VARIANT}
+			fi
+		done
 	done
-	echo
-done
-echo "End Zaribo"
+done		
+echo "End $COMPANY"
 
 ## MODS
-echo "Start BE"
+echo "Start $COMPANY BE"
 MOD="BE" ##Bondtech Prusa Edition Extruder for MK25/MK25S/MK3/MK3S
-for TYPE in ${TypesArray[@]}; do
-	echo "Type: $TYPE Mod: $MOD"
-	if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
-		BOARD="EINSy10a"
-	elif [[ $TYPE == "MK25" || $TYPE == "MK25S" ]]; then
-		BOARD="RAMBo13a"
-	else
-		echo "Unsupported controller"
-		exit 1
-	fi
-	for HEIGHT in ${HeightsArray[@]};
-	do
-		BASE="Zaribo_$TYPE-$HEIGHT.h"
-		VARIANT="Zaribo_$TYPE-$MOD-$HEIGHT.h"
-		BMGHEIGHT=$(( $HEIGHT + $BMGHeightDiff ))
-		#echo $BASE
-		#echo $TYPE
-		#echo $HEIGHT
-		#echo $BMGHEIGHT
-		echo $VARIANT
-		# Modify printer name
-		cp ${BASE} ${VARIANT}
-		sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
-		# Printer Height
-		sed -i -e "s/^#define Z_MAX_POS ${HEIGHT}*/#define Z_MAX_POS ${BMGHEIGHT}/g" ${VARIANT}
+for COMPANY in ${CompanyArray[@]}; do
+	for TYPE in ${TypesArray[@]}; do
+		echo "Type: $TYPE Mod: $MOD"
 		if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
-			# E Steps for MK3 and MK3S with Bondetch extruder
-			sed -i -e 's/#define DEFAULT_AXIS_STEPS_PER_UNIT   {100,100,3200\/8,280}*/#define DEFAULT_AXIS_STEPS_PER_UNIT   {100,100,3200\/8,415}/' ${VARIANT}
+			BOARD="EINSy10a"
 		elif [[ $TYPE == "MK25" || $TYPE == "MK25S" ]]; then
-			# E Steps for MK25 and MK25S with Bondetch extruder
-			sed -i -e 's/#define DEFAULT_AXIS_STEPS_PER_UNIT   {100,100,3200\/8,133}*/#define DEFAULT_AXIS_STEPS_PER_UNIT   {100,100,3200\/8,415}/' ${VARIANT}
+			BOARD="RAMBo13a"
+		else
+			echo "Unsupported controller"
+			exit 1
 		fi
-		# Microsteps
-		sed -i -e 's/#define TMC2130_USTEPS_E    32*/#define TMC2130_USTEPS_E    16/' ${VARIANT}
-		# Filament Load Distances (BPE gears are farther from the hotend)
-		sed -i -e 's/#define FILAMENTCHANGE_FIRSTFEED 70*/#define FILAMENTCHANGE_FIRSTFEED 80/' ${VARIANT}
-		sed -i -e 's/#define LOAD_FILAMENT_1 "G1 E70 F400"*/#define LOAD_FILAMENT_1 "G1 E80 F400"/' ${VARIANT}
-		sed -i -e 's/#define UNLOAD_FILAMENT_1 "G1 E-80 F7000"*/#define UNLOAD_FILAMENT_1 "G1 E-95 F7000"/' ${VARIANT}
-		sed -i -e 's/#define FILAMENTCHANGE_FINALRETRACT -80*/#define FILAMENTCHANGE_FINALRETRACT -95/' ${VARIANT}
-		sed -i -e 's/#define FILAMENTCHANGE_FINALFEED 70*/#define FILAMENTCHANGE_FINALFEED 80/' ${VARIANT}
-		# Display Type 
-		sed -i -e "s/\/\/#define WEH002004_OLED*/#define WEH002004_OLED/g" ${VARIANT}
-		# Enable Bondtech E3d MMU settings
-		sed -i -e "s/\/\/#define BONDTECH_MK3S*/#define BONDTECH_MK3S/g" ${VARIANT}
+		if [ $COMPANY == "Zaribo" ]; then
+			declare -a HeightsArray=( 220 320 420)
+		elif [ $COMPANY == "Prusa" ]; then
+			declare -a HeightsArray=( 210 )
+		fi
+		for HEIGHT in ${HeightsArray[@]}; do
+			BASE="$COMPANY-$TYPE-$HEIGHT.h"
+			VARIANT="$COMPANY-$TYPE-$MOD-$HEIGHT.h"
+			BMGHEIGHT=$(( $HEIGHT + $BMGHeightDiff ))
+			#echo $BASE
+			#echo $TYPE
+			#echo $HEIGHT
+			#echo $BMGHEIGHT
+			echo $VARIANT
+			# Modify printer name
+			cp ${BASE} ${VARIANT}
+			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
+			# Printer Height
+			sed -i -e "s/^#define Z_MAX_POS ${HEIGHT}*/#define Z_MAX_POS ${BMGHEIGHT}/g" ${VARIANT}
+			if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
+				# E Steps for MK3 and MK3S with Bondetch extruder
+				sed -i -e 's/#define DEFAULT_AXIS_STEPS_PER_UNIT   {100,100,3200\/8,280}*/#define DEFAULT_AXIS_STEPS_PER_UNIT   {100,100,3200\/8,415}/' ${VARIANT}
+			elif [[ $TYPE == "MK25" || $TYPE == "MK25S" ]]; then
+				# E Steps for MK25 and MK25S with Bondetch extruder
+				sed -i -e 's/#define DEFAULT_AXIS_STEPS_PER_UNIT   {100,100,3200\/8,133}*/#define DEFAULT_AXIS_STEPS_PER_UNIT   {100,100,3200\/8,415}/' ${VARIANT}
+			fi
+			# Microsteps
+			sed -i -e 's/#define TMC2130_USTEPS_E    32*/#define TMC2130_USTEPS_E    16/' ${VARIANT}
+			# Filament Load Distances (BPE gears are farther from the hotend)
+			sed -i -e 's/#define FILAMENTCHANGE_FIRSTFEED 70*/#define FILAMENTCHANGE_FIRSTFEED 80/' ${VARIANT}
+			sed -i -e 's/#define LOAD_FILAMENT_1 "G1 E70 F400"*/#define LOAD_FILAMENT_1 "G1 E80 F400"/' ${VARIANT}
+			sed -i -e 's/#define UNLOAD_FILAMENT_1 "G1 E-80 F7000"*/#define UNLOAD_FILAMENT_1 "G1 E-95 F7000"/' ${VARIANT}
+			sed -i -e 's/#define FILAMENTCHANGE_FINALRETRACT -80*/#define FILAMENTCHANGE_FINALRETRACT -95/' ${VARIANT}
+			sed -i -e 's/#define FILAMENTCHANGE_FINALFEED 70*/#define FILAMENTCHANGE_FINALFEED 80/' ${VARIANT}
+			# Display Type 
+			sed -i -e "s/\/\/#define WEH002004_OLED*/#define WEH002004_OLED/g" ${VARIANT}
+			# Enable Bondtech E3d MMU settings
+			sed -i -e "s/\/\/#define BONDTECH_MK3S*/#define BONDTECH_MK3S/g" ${VARIANT}
+		done
 	done
-	echo
 done
-echo "End BE"
+echo "End $COMPANY BE"
 
-echo "Start BM"
+echo "Start $COMPANY BM"
 BASE_MOD=BE
 MOD="BM" ##Bondtech Prusa Mosquito Edition for MK2.5S and MK3S
-declare -a BMQArray=( "MK3S" "MK25S")
-for TYPE in ${BMQArray[@]}; do
-	echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
-	if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
-		BOARD="EINSy10a"
-	elif [[ $TYPE == "MK25" || $TYPE == "MK25S" ]]; then
-		BOARD="RAMBo13a"
-	else
-		echo "Unsupported controller"
-		exit 1
-	fi
-	for HEIGHT in ${HeightsArray[@]};
-	do
-		BASE="Zaribo_$TYPE-$BASE_MOD-$HEIGHT.h"
-		VARIANT="Zaribo_$TYPE-$MOD-$HEIGHT.h"
-		#echo $BASE
-		#echo $TYPE
-		#echo $HEIGHT
-		echo $VARIANT
-		cp ${BASE} ${VARIANT}
-		# Modify printer name
-		sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
-		# Hotend Type 
-		sed -i -e 's/#define NOZZLE_TYPE "E3Dv6full"*/#define NOZZLE_TYPE "Mosquito"/' ${VARIANT}
-		# Enable Bondtech Mosquito MMU settings
-		sed -i -e "s/#define BONDTECH_MK3S*/\/\/#define BONDTECH_MK3S/g" ${VARIANT}
-		sed -i -e "s/\/\/#define BONDTECH_MOSQUITO*/#define BONDTECH_MOSQUITO/g" ${VARIANT}
+declare -a BMArray=( "MK3S" "MK25S")
+for COMPANY in ${CompanyArray[@]}; do
+	for TYPE in ${BMArray[@]}; do
+		echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
+		if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
+			BOARD="EINSy10a"
+		elif [[ $TYPE == "MK25" || $TYPE == "MK25S" ]]; then
+			BOARD="RAMBo13a"
+		else
+			echo "Unsupported controller"
+			exit 1
+		fi
+		if [ $COMPANY == "Zaribo" ]; then
+			declare -a HeightsArray=( 220 320 420)
+		elif [ $COMPANY == "Prusa" ]; then
+			declare -a HeightsArray=( 210 )
+		fi
+		for HEIGHT in ${HeightsArray[@]}; do
+			BASE="$COMPANY-$TYPE-$BASE_MOD-$HEIGHT.h"
+			VARIANT="$COMPANY-$TYPE-$MOD-$HEIGHT.h"
+			#echo $BASE
+			#echo $TYPE
+			#echo $HEIGHT
+			echo $VARIANT
+			cp ${BASE} ${VARIANT}
+			# Modify printer name
+			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
+			# Hotend Type 
+			sed -i -e 's/#define NOZZLE_TYPE "E3Dv6full"*/#define NOZZLE_TYPE "Mosquito"/' ${VARIANT}
+			# Enable Bondtech Mosquito MMU settings
+			sed -i -e "s/#define BONDTECH_MK3S*/\/\/#define BONDTECH_MK3S/g" ${VARIANT}
+			sed -i -e "s/\/\/#define BONDTECH_MOSQUITO*/#define BONDTECH_MOSQUITO/g" ${VARIANT}
+		done
 	done
-	echo
 done
-echo "End BM"
+echo "End $COMPANY BM"
 
-echo "Start BMH"
+echo "Start $COMPANY BMH"
 BASE_MOD=BM
 MOD="BMH" ##Bondtech Prusa Mosquito Edition for MK2.5S and MK3S with Slice High Temperature Thermistor
-for TYPE in ${BMQArray[@]}; do
-	echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
-	if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
-		BOARD="EINSy10a"
-	elif [[ $TYPE == "MK25" || $TYPE == "MK25S" ]]; then
-		BOARD="RAMBo13a"
-	else
-		echo "Unsupported controller"
-		exit 1
-	fi
-	for HEIGHT in ${HeightsArray[@]};
-	do
-		BASE="Zaribo_$TYPE-$BASE_MOD-$HEIGHT.h"
-		VARIANT="Zaribo_$TYPE-$MOD-$HEIGHT.h"
-		#echo $BASE
-		#echo $TYPE
-		#echo $HEIGHT
-		echo $VARIANT
-		cp ${BASE} ${VARIANT}
-		# Modify printer name
-		sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
-		# Enable Slice High Temperature Thermistor
-		sed -i -e "s/\/\/#define SLICE_HT_EXTRUDER*/#define SLICE_HT_EXTRUDER/g" ${VARIANT}
-		# Change mintemp for Slice High Temperature Thermistor
-		sed -i -e "s/#define HEATER_0_MINTEMP 15*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
+for COMPANY in ${CompanyArray[@]}; do
+	for TYPE in ${BMArray[@]}; do
+		echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
+		if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
+			BOARD="EINSy10a"
+		elif [[ $TYPE == "MK25" || $TYPE == "MK25S" ]]; then
+			BOARD="RAMBo13a"
+		else
+			echo "Unsupported controller"
+			exit 1
+		fi
+		if [ $COMPANY == "Zaribo" ]; then
+			declare -a HeightsArray=( 220 320 420)
+		elif [ $COMPANY == "Prusa" ]; then
+			declare -a HeightsArray=( 210 )
+		fi
+		for HEIGHT in ${HeightsArray[@]}; do
+			BASE="$COMPANY-$TYPE-$BASE_MOD-$HEIGHT.h"
+			VARIANT="$COMPANY-$TYPE-$MOD-$HEIGHT.h"
+			#echo $BASE
+			#echo $TYPE
+			#echo $HEIGHT
+			echo $VARIANT
+			cp ${BASE} ${VARIANT}
+			# Modify printer name
+			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
+			# Enable Slice High Temperature Thermistor
+			sed -i -e "s/\/\/#define SLICE_HT_EXTRUDER*/#define SLICE_HT_EXTRUDER/g" ${VARIANT}
+			# Change mintemp for Slice High Temperature Thermistor
+			sed -i -e "s/#define HEATER_0_MINTEMP 15*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
+		done
 	done
-	echo
 done
-echo "End BMQH"
+echo "End $COMPANY BMH"
 
+echo "Start $COMPANY BMM"
 BASE_MOD=BM
 MOD="BMM" ##Bondtech Prusa Mosquito Magnum Edition for MK2.5S and MK3S
-declare -a BMGOArray=( "MK3S")
-for TYPE in ${BMGOArray[@]}; do
-	echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
-	if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
-		BOARD="EINSy10a"
-	elif [[ $TYPE == "MK25" || $TYPE == "MK25S" ]]; then
-		BOARD="RAMBo13a"
-	else
-		echo "Unsupported controller"
-		exit 1
-	fi
-	for HEIGHT in ${HeightsArray[@]};
-	do
-		BASE="Zaribo_$TYPE-$BASE_MOD-$HEIGHT.h"
-		VARIANT="Zaribo_$TYPE-$MOD-$HEIGHT.h"
-		#echo $BASE
-		#echo $TYPE
-		#echo $HEIGHT
-		echo $VARIANT
-		cp ${BASE} ${VARIANT}
-		# Modify printer name
-		sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
-		# Hotend Type 
-		sed -i -e 's/#define NOZZLE_TYPE "Mosquito"*/#define NOZZLE_TYPE "Mosquito Magnum"/' ${VARIANT}
-		# Enable Bondtech Mosquito MMU settings
-		sed -i -e "s/#define BONDTECH_MOSQUITO*/\/\/#define BONDTECH_MOSQUITO/g" ${VARIANT}
-		sed -i -e "s/\/\/#define BONDTECH_M_MAGNUM*/#define BONDTECH_M_MAGNUM/g" ${VARIANT}
+declare -a BMArray=( "MK3S" )
+for COMPANY in ${CompanyArray[@]}; do
+	for TYPE in ${BMArray[@]}; do
+		echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
+		if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
+			BOARD="EINSy10a"
+		elif [[ $TYPE == "MK25" || $TYPE == "MK25S" ]]; then
+			BOARD="RAMBo13a"
+		else
+			echo "Unsupported controller"
+			exit 1
+		fi
+		if [ $COMPANY == "Zaribo" ]; then
+			declare -a HeightsArray=( 220 320 420)
+		elif [ $COMPANY == "Prusa" ]; then
+			declare -a HeightsArray=( 210 )
+		fi
+		for HEIGHT in ${HeightsArray[@]};
+		do
+			BASE="$COMPANY-$TYPE-$BASE_MOD-$HEIGHT.h"
+			VARIANT="$COMPANY-$TYPE-$MOD-$HEIGHT.h"
+			#echo $BASE
+			#echo $TYPE
+			#echo $HEIGHT
+			echo $VARIANT
+			cp ${BASE} ${VARIANT}
+			# Modify printer name
+			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
+			# Hotend Type 
+			sed -i -e 's/#define NOZZLE_TYPE "Mosquito"*/#define NOZZLE_TYPE "Mosquito Magnum"/' ${VARIANT}
+			# Enable Bondtech Mosquito MMU settings
+			sed -i -e "s/#define BONDTECH_MOSQUITO*/\/\/#define BONDTECH_MOSQUITO/g" ${VARIANT}
+			sed -i -e "s/\/\/#define BONDTECH_M_MAGNUM*/#define BONDTECH_M_MAGNUM/g" ${VARIANT}
+		done
 	done
-	echo
 done
+echo "End $COMPANY BMM"
 
+echo "Start $COMPANY BMMH"
 BASE_MOD=BMM
 MOD="BMMH" ##Bondtech Prusa Mosquito Magnum Edition with Slice High Temperature Thermistor
-declare -a BMGOArray=( "MK3S")
-for TYPE in ${BMGOArray[@]}; do
-	echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
-	if [ "$TYPE" == "MK3S" ]; then
-		BOARD="EINSy10a"
-	else
-		echo "Unsupported controller"
-		exit 1
-	fi
-	for HEIGHT in ${HeightsArray[@]};
-	do
-		BASE="Zaribo_$TYPE-$BASE_MOD-$HEIGHT.h"
-		VARIANT="Zaribo_$TYPE-$MOD-$HEIGHT.h"
-		#echo $BASE
-		#echo $TYPE
-		#echo $HEIGHT
-		echo $VARIANT
-		cp ${BASE} ${VARIANT}
-		sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
-		# Enable Slice High Temperature Thermistor
-		sed -i -e "s/\/\/#define SLICE_HT_EXTRUDER*/#define SLICE_HT_EXTRUDER/g" ${VARIANT}
-		# Change mintemp for Slice High Temperature Thermistor
-		sed -i -e "s/#define HEATER_0_MINTEMP 15*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
+declare -a BMMArray=( "MK3S" )
+for COMPANY in ${CompanyArray[@]}; do
+	for TYPE in ${BMMArray[@]}; do
+		echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
+		if [ "$TYPE" == "MK3S" ]; then
+			BOARD="EINSy10a"
+		else
+			echo "Unsupported controller"
+			exit 1
+		fi
+		if [ $COMPANY == "Zaribo" ]; then
+			declare -a HeightsArray=( 220 320 420)
+		elif [ $COMPANY == "Prusa" ]; then
+			declare -a HeightsArray=( 210 )
+		fi
+		for HEIGHT in ${HeightsArray[@]}; do
+			BASE="$COMPANY-$TYPE-$BASE_MOD-$HEIGHT.h"
+			VARIANT="$COMPANY-$TYPE-$MOD-$HEIGHT.h"
+			#echo $BASE
+			#echo $TYPE
+			#echo $HEIGHT
+			echo $VARIANT
+			cp ${BASE} ${VARIANT}
+			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
+			# Enable Slice High Temperature Thermistor
+			sed -i -e "s/\/\/#define SLICE_HT_EXTRUDER*/#define SLICE_HT_EXTRUDER/g" ${VARIANT}
+			# Change mintemp for Slice High Temperature Thermistor
+			sed -i -e "s/#define HEATER_0_MINTEMP 15*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
+		done
 	done
-	echo
 done
+echo "End $COMPANY BMMH"
 
