@@ -210,7 +210,7 @@ static void lcd_begin(uint8_t clear)
     lcd_send(LCD_FUNCTIONSET | LCD_4BITMODE | LCD_2LINE, LOW | LCD_HALF_FLAG); // 0010xxxx //functionset 4 bit
     lcd_send((/*LCD_FUNCTIONSET | LCD_4BITMODE | */LCD_2LINE) << 4, LOW | LCD_HALF_FLAG); // xxxx1000 //two line lcd second nibble
 
-    lcd_no_display();
+    //lcd_no_display();
     lcd_command(LCD_FUNCTIONSET | lcd_displayfunction); // Set # lines, font size, etc.
     lcd_clear();
     lcd_command(LCD_ENTRYMODESET | lcd_displaymode); // Set Entry Mode
