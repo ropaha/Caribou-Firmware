@@ -220,7 +220,7 @@ echo "End $COMPANY BM"
 echo "Start $COMPANY BMH"
 BASE_MOD=BM
 MOD="BMH" ##Bondtech Prusa Mosquito Edition for MK2.5S and MK3S with Slice High Temperature Thermistor
-<<<<<<< HEAD
+
 for COMPANY in ${CompanyArray[@]}; do
 	for TYPE in ${BMArray[@]}; do
 		echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
@@ -252,7 +252,7 @@ for COMPANY in ${CompanyArray[@]}; do
 			# Change mintemp for Slice High Temperature Thermistor
 			sed -i -e "s/#define HEATER_0_MINTEMP 15*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
 		done
-=======
+
 for TYPE in ${BMQArray[@]}; do
 	echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
 	if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
@@ -278,7 +278,6 @@ for TYPE in ${BMQArray[@]}; do
 		sed -i -e "s/\/\/#define SLICE_HT_EXTRUDER*/#define SLICE_HT_EXTRUDER/g" ${VARIANT}
 		# Change mintemp for Slice High Temperature Thermistor
 		sed -i -e "s/#define HEATER_0_MINTEMP 10*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
->>>>>>> bb47f46cb0882dcd8fcabdf24a43394f89751960
 	done
 done
 echo "End $COMPANY BMH"
@@ -327,7 +326,6 @@ echo "End $COMPANY BMM"
 echo "Start $COMPANY BMMH"
 BASE_MOD=BMM
 MOD="BMMH" ##Bondtech Prusa Mosquito Magnum Edition with Slice High Temperature Thermistor
-<<<<<<< HEAD
 declare -a BMMArray=( "MK3S" )
 for COMPANY in ${CompanyArray[@]}; do
 	for TYPE in ${BMMArray[@]}; do
@@ -355,33 +353,8 @@ for COMPANY in ${CompanyArray[@]}; do
 			# Enable Slice High Temperature Thermistor
 			sed -i -e "s/\/\/#define SLICE_HT_EXTRUDER*/#define SLICE_HT_EXTRUDER/g" ${VARIANT}
 			# Change mintemp for Slice High Temperature Thermistor
-			sed -i -e "s/#define HEATER_0_MINTEMP 15*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
+			sed -i -e "s/#define HEATER_0_MINTEMP 10*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
 		done
-=======
-declare -a BMGOArray=( "MK3S")
-for TYPE in ${BMGOArray[@]}; do
-	echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
-	if [ "$TYPE" == "MK3S" ]; then
-		BOARD="EINSy10a"
-	else
-		echo "Unsupported controller"
-		exit 1
-	fi
-	for HEIGHT in ${HeightsArray[@]};
-	do
-		BASE="Zaribo_$TYPE-$BASE_MOD-$HEIGHT.h"
-		VARIANT="Zaribo_$TYPE-$MOD-$HEIGHT.h"
-		#echo $BASE
-		#echo $TYPE
-		#echo $HEIGHT
-		echo $VARIANT
-		cp ${BASE} ${VARIANT}
-		sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
-		# Enable Slice High Temperature Thermistor
-		sed -i -e "s/\/\/#define SLICE_HT_EXTRUDER*/#define SLICE_HT_EXTRUDER/g" ${VARIANT}
-		# Change mintemp for Slice High Temperature Thermistor
-		sed -i -e "s/#define HEATER_0_MINTEMP 10*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
->>>>>>> bb47f46cb0882dcd8fcabdf24a43394f89751960
 	done
 done
 echo "End $COMPANY BMMH"
