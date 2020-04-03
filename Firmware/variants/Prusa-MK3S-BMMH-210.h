@@ -19,7 +19,7 @@
 #define DEVELOPER
 
 // Printer name
-#define CUSTOM_MENDEL_NAME "Prusa MK3S-BMMH-210"
+#define CUSTOM_MENDEL_NAME "Prusa i3 MK3S"
 
 // WEH002004 OLED Display uncomment WEH002004_OLED if have this kind of display
 #define WEH002004_OLED
@@ -295,7 +295,7 @@
  *------------------------------------*/
 
 // Mintemps
-#define HEATER_0_MINTEMP 50
+#define HEATER_0_MINTEMP 5
 #define HEATER_1_MINTEMP 5
 #define HEATER_2_MINTEMP 5
 #define HEATER_MINTEMP_DELAY 15000                // [ms] ! if changed, check maximal allowed value @ ShortTimer

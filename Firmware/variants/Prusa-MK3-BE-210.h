@@ -6,6 +6,7 @@
 #include "printers.h"
 /*------------------------------------
  GENERAL SETTINGS
+"test"
  *------------------------------------*/
 
 // Printer revision
@@ -20,7 +21,10 @@
 #define DEVELOPER
 
 // Printer name
-#define CUSTOM_MENDEL_NAME "Prusa MK3-BE-210"
+#define CUSTOM_MENDEL_NAME "Prusa i3 MK3"
+
+// WEH002004 OLED Display uncomment WEH002004_OLED if have this kind of display
+#define WEH002004_OLED
 
 // Electronics
 #define MOTHERBOARD BOARD_EINSY_1_0a

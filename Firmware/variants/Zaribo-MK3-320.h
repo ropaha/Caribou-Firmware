@@ -6,6 +6,7 @@
 #include "printers.h"
 /*------------------------------------
  GENERAL SETTINGS
+"test"
  *------------------------------------*/
 
 // Printer revision
@@ -21,6 +22,9 @@
 
 // Printer name
 #define CUSTOM_MENDEL_NAME "Zaribo MK3-320"
+
+// WEH002004 OLED Display uncomment WEH002004_OLED if have this kind of display
+//#define WEH002004_OLED
 
 // Electronics
 #define MOTHERBOARD BOARD_EINSY_1_0a

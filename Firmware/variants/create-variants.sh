@@ -103,9 +103,9 @@ for COMPANY in ${CompanyArray[@]}; do
 			else
 				PRUSA_TYPE=$TYPE
 			fi
-			# Modify printer name
-			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Prusa i3 '$PRUSA_TYPE'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$HEIGHT'"/g' ${VARIANT}
 			if [ $COMPANY == "Zaribo" ]; then
+				# Modify printer name
+				sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Prusa i3 '$PRUSA_TYPE'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$HEIGHT'"/g' ${VARIANT}
 				# Inverted Y-Motor only for MK3
 				if [ $BOARD == "EINSy10a" ]; then
 					sed -i -e "s/^#define INVERT_Y_DIR 0*/#define INVERT_Y_DIR 1/g" ${VARIANT}
@@ -114,6 +114,9 @@ for COMPANY in ${CompanyArray[@]}; do
 				sed -i -e "s/^#define Z_MAX_POS 210*/#define Z_MAX_POS ${HEIGHT}/g" ${VARIANT}
 				# Disable PSU_Delta
 				sed -i -e "s/^#define PSU_Delta*/\/\/#define PSU_Delta/g" ${VARIANT}
+			elif [ $COMPANY == "Prusa" ]; then
+				# Display Type 
+				sed -i -e "s/\/\/#define WEH002004_OLED*/#define WEH002004_OLED/g" ${VARIANT}
 			fi
 		done
 	done
@@ -252,6 +255,8 @@ for COMPANY in ${CompanyArray[@]}; do
 			# Change mintemp for Slice High Temperature Thermistor
 			sed -i -e "s/#define HEATER_0_MINTEMP 15*/#define HEATER_0_MINTEMP 5/g" ${VARIANT}
 		done
+	done
+done
 
 for TYPE in ${BMQArray[@]}; do
 	echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
@@ -263,10 +268,9 @@ for TYPE in ${BMQArray[@]}; do
 		echo "Unsupported controller"
 		exit 1
 	fi
-	for HEIGHT in ${HeightsArray[@]};
-	do
-		BASE="Zaribo_$TYPE-$BASE_MOD-$HEIGHT.h"
-		VARIANT="Zaribo_$TYPE-$MOD-$HEIGHT.h"
+	for HEIGHT in ${HeightsArray[@]}; do
+		BASE="COMPANY-$TYPE-$BASE_MOD-$HEIGHT.h"
+		VARIANT="COMPANY-$TYPE-$MOD-$HEIGHT.h"
 		#echo $BASE
 		#echo $TYPE
 		#echo $HEIGHT
@@ -285,7 +289,7 @@ echo "End $COMPANY BMH"
 echo "Start $COMPANY BMM"
 BASE_MOD=BM
 MOD="BMM" ##Bondtech Prusa Mosquito Magnum Edition for MK2.5S and MK3S
-declare -a BMArray=( "MK3S" )
+declare -a BMArray=( "MK3S" "MK25S" )
 for COMPANY in ${CompanyArray[@]}; do
 	for TYPE in ${BMArray[@]}; do
 		echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
@@ -302,8 +306,7 @@ for COMPANY in ${CompanyArray[@]}; do
 		elif [ $COMPANY == "Prusa" ]; then
 			declare -a HeightsArray=( 210 )
 		fi
-		for HEIGHT in ${HeightsArray[@]};
-		do
+		for HEIGHT in ${HeightsArray[@]}; do
 			BASE="$COMPANY-$TYPE-$BASE_MOD-$HEIGHT.h"
 			VARIANT="$COMPANY-$TYPE-$MOD-$HEIGHT.h"
 			#echo $BASE
@@ -326,12 +329,14 @@ echo "End $COMPANY BMM"
 echo "Start $COMPANY BMMH"
 BASE_MOD=BMM
 MOD="BMMH" ##Bondtech Prusa Mosquito Magnum Edition with Slice High Temperature Thermistor
-declare -a BMMArray=( "MK3S" )
+declare -a BMMArray=( "MK3S" "MK25S" )
 for COMPANY in ${CompanyArray[@]}; do
 	for TYPE in ${BMMArray[@]}; do
 		echo "Type: $TYPE Base_MOD: $BASE_MOD MOD: $MOD"
 		if [ "$TYPE" == "MK3S" ]; then
 			BOARD="EINSy10a"
+		elif [[ $TYPE == "MK25" || $TYPE == "MK25S" ]]; then
+			BOARD="RAMBo13a"
 		else
 			echo "Unsupported controller"
 			exit 1
