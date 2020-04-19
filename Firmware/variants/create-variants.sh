@@ -19,7 +19,7 @@
 # ModArray is an array of printer mods
 #
 #
-# Version 1.0.8
+# Version 1.0.10
 ################################################################################
 # 3 Jul 2019, vertigo235, Inital varaiants script
 # 8 Aug 2019, 3d-gussner, Modified for Zaribo needs
@@ -34,6 +34,7 @@
 # 15 Nov 2019, 3d-gussner, Fix Bondtech Steps on MK25 and MK25s. Thanks to Bernd pointing it out.
 # 30 Dec 2019, 3d-gussner, Fix MK2.5 y motor direction
 # 08 Feb 2020, 3d-gussner, Add Prusa MK25/s and MK3/s with OLED and with/without Bondtech
+# 19 Apr 2020, 3d-gussner, Add #define EXTRUDER_DESIGN R3 in varaiants files for Zaribo, Bear, Bondtech extruder
 ################################################################################
 
 # Constants
@@ -106,6 +107,8 @@ for COMPANY in ${CompanyArray[@]}; do
 			if [ $COMPANY == "Zaribo" ]; then
 				# Modify printer name
 				sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Prusa i3 '$PRUSA_TYPE'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$HEIGHT'"/g' ${VARIANT}
+				# Enable Extruder_Design_R3 for Zaribo
+				sed -i -e "s/\/\/#define EXTRUDER_DESIGN_R3*/#define EXTRUDER_DESIGN_R3/g" ${VARIANT}
 				# Inverted Y-Motor only for MK3
 				if [ $BOARD == "EINSy10a" ]; then
 					sed -i -e "s/^#define INVERT_Y_DIR 0*/#define INVERT_Y_DIR 1/g" ${VARIANT}
@@ -154,6 +157,8 @@ for COMPANY in ${CompanyArray[@]}; do
 			# Modify printer name
 			cp ${BASE} ${VARIANT}
 			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
+			# Enable Extruder_Design_R3 for Zaribo
+			sed -i -e "s/\/\/#define EXTRUDER_DESIGN_R3*/#define EXTRUDER_DESIGN_R3/g" ${VARIANT}
 			# Printer Height
 			sed -i -e "s/^#define Z_MAX_POS ${HEIGHT}*/#define Z_MAX_POS ${BMGHEIGHT}/g" ${VARIANT}
 			if [[ "$TYPE" == "MK3" || "$TYPE" == "MK3S" ]]; then
