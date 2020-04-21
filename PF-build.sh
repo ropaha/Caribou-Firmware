@@ -56,7 +56,7 @@
 #   Some may argue that this is only used by a script, BUT as soon someone accidentally or on purpose starts Arduino IDE
 #   it will use the default Arduino IDE folders and so can corrupt the build environment.
 #
-# Version: 1.0.6-Build_20
+# Version: 1.0.6-Build_21
 # Change log:
 # 12 Jan 2019, 3d-gussner, Fixed "compiler.c.elf.flags=-w -Os -Wl,-u,vfprintf -lprintf_flt -lm -Wl,--gc-sections" in 'platform.txt'
 # 16 Jan 2019, 3d-gussner, Build_2, Added development check to modify 'Configuration.h' to prevent unwanted LCD messages that Firmware is unknown
@@ -127,6 +127,8 @@
 #                           - No branding
 #							- Change for stock Prusa R4/R5 Extruder
 # 17 Feb 2020, 3d-gussner, Add aarch64 beat support to compile on Odroid-C1/2 RPi4+ 
+# 21 Apr 2020, 3d-gussner, Update the FW_COMMIT number to current commit number
+#                          Add git hash to support LCD menu
 
 #### Start check if OSTYPE is supported
 OS_FOUND=$( command -v uname)
@@ -434,6 +436,12 @@ fi
 #### Start 
 cd $SCRIPT_PATH
 
+# Get Commit_Hash
+GIT_COMMIT_HASH=$(git log --pretty=format:"%h" -1)
+
+# Get Commit_Number
+GIT_COMMIT_NUMBER=$(git rev-list HEAD --count)
+
 # First argument defines which variant of the Prusa Firmware will be compiled 
 if [ -z "$1" ] ; then
 	# Select which variant of the Prusa Firmware will be compiled, like
@@ -540,6 +548,12 @@ do
 	FW=$(grep --max-count=1 "\bFW_VERSION\b" $SCRIPT_PATH/Firmware/Configuration.h | sed -e's/  */ /g'|cut -d '"' -f2|sed 's/\.//g')
 	# Find build version in Configuration.h file and use it to generate the hex filename
 	BUILD=$(grep --max-count=1 "\bFW_COMMIT_NR\b" $SCRIPT_PATH/Firmware/Configuration.h | sed -e's/  */ /g'|cut -d ' ' -f3)
+	if [ "$BUILD" == "$GIT_COMMIT_NUMBER" ] ; then
+		echo "FW_COMMIT in Configuration.h is identical to current git commit number"
+	else
+		echo "$(tput setaf 5)FW_COMMIT $BUILD in Configuration.h is DIFFERENT to current git commit number $GIT_COMMIT_NUMBER. To cancel this process press CRTL+C and update the FW_COMMIT value.$(tput sgr0)"
+		read -t 10 -p "Press Enter to continue..."
+	fi
 	# Check if the motherboard is an EINSY and if so only one hex file will generated
 	MOTHERBOARD=$(grep --max-count=1 "\bMOTHERBOARD\b" $SCRIPT_PATH/Firmware/variants/$VARIANT.h | sed -e's/  */ /g' |cut -d ' ' -f3)
 	# Check development status
@@ -638,6 +652,10 @@ do
 
 	# set FW_REPOSITORY
 	sed -i -- 's/#define FW_REPOSITORY "Unknown"/#define FW_REPOSITORY "Prusa3d"/g' $SCRIPT_PATH/Firmware/Configuration.h
+
+	# set FW_COMMIT_HASH
+	#echo $GIT_COMMIT_HASH
+	sed -i -- "s/.*#define FW_COMMIT_HASH.*/#define FW_COMMIT_HASH \"${GIT_COMMIT_HASH}\"/g" $SCRIPT_PATH/Firmware/Configuration.h
 
 	# Branding
 	export SCRIPT_PATH=$SCRIPT_PATH
