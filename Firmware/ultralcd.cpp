@@ -2169,14 +2169,14 @@ static void lcd_support_menu()
   switch(oFsensorPCB)
        {
        case ClFsensorPCB::_Old:
-            MENU_ITEM_BACK_P(PSTR(" 03 or older"));
+            MENU_ITEM_BACK_P(MSG_03_OR_OLDER);
             break;
-       case ClFsensorPCB::_Rev03b:
-            MENU_ITEM_BACK_P(PSTR(" 03b or newer"));
+       case ClFsensorPCB::_Rev04:
+            MENU_ITEM_BACK_P(MSG_04_OR_NEWER);
             break;
        case ClFsensorPCB::_Undef:
        default:
-            MENU_ITEM_BACK_P(PSTR(" state unknown"));
+            MENU_ITEM_BACK_P(PSTR(" unknown state"));
        }
 #endif // IR_SENSOR_ANALOG
 
@@ -7479,73 +7479,56 @@ static void lcd_belttest_v()
     lcd_belttest();
     menu_back_if_clicked();
 }
-void lcd_belttest_print(const char* msg, uint16_t X, uint16_t Y)
-{
-    lcd_clear();
-    lcd_printf_P(
-              _N(
-                 "%S:\n"
-                 "%S\n"
-                 "X:%d\n"
-                 "Y:%d"
-                 ),
-              _i("Belt status"),
-              msg,
-              X,Y
-            );
-}
+
 void lcd_belttest()
 {
-    bool _result = true;
-    
-    #ifdef TMC2130 // Belttest requires high power mode. Enable it.
-	    FORCE_HIGH_POWER_START;
-    #endif
+    lcd_clear();
+	// Belttest requires high power mode. Enable it.
+	FORCE_HIGH_POWER_START;
     
     uint16_t   X = eeprom_read_word((uint16_t*)(EEPROM_BELTSTATUS_X));
     uint16_t   Y = eeprom_read_word((uint16_t*)(EEPROM_BELTSTATUS_Y));
-    lcd_belttest_print(_i("Checking X..."), X, Y);
-
+	lcd_printf_P(_i("Checking X axis  ")); // share message with selftest
+	lcd_set_cursor(0,1), lcd_printf_P(PSTR("X: %u -> ..."),X);
     KEEPALIVE_STATE(IN_HANDLER);
     
-    _result = lcd_selfcheck_axis_sg(X_AXIS);
-    X = eeprom_read_word((uint16_t*)(EEPROM_BELTSTATUS_X));
-    if (_result){
-        lcd_belttest_print(_i("Checking Y..."), X, Y);
-        _result = lcd_selfcheck_axis_sg(Y_AXIS);
-        Y = eeprom_read_word((uint16_t*)(EEPROM_BELTSTATUS_Y));
+	// N.B: it doesn't make sense to handle !lcd_selfcheck...() because selftest_sg throws its own error screen
+	// that clobbers ours, with more info than we could provide. So on fail we just fall through to take us back to status.
+    if (lcd_selfcheck_axis_sg(X_AXIS)){
+		X = eeprom_read_word((uint16_t*)(EEPROM_BELTSTATUS_X));
+		lcd_set_cursor(10,1), lcd_printf_P(PSTR("%u"),X); // Show new X value next to old one.
+        lcd_puts_at_P(0,2,_i("Checking Y axis  "));
+		lcd_set_cursor(0,3), lcd_printf_P(PSTR("Y: %u -> ..."),Y);
+		if (lcd_selfcheck_axis_sg(Y_AXIS))
+		{
+			Y = eeprom_read_word((uint16_t*)(EEPROM_BELTSTATUS_Y));
+			lcd_set_cursor(10,3),lcd_printf_P(PSTR("%u"),Y);
+			lcd_set_cursor(19, 3);
+			lcd_print(LCD_STR_UPLEVEL);
+			lcd_wait_for_click_delay(10);
+		}
     }
-    
-    if (!_result) {
-        lcd_belttest_print(_i("Error"), X, Y);
-    } else {
-        lcd_belttest_print(_i("Done"), X, Y);
-    }   
-
-    #ifdef TMC2130
-	    FORCE_HIGH_POWER_END;
-    #endif
-    
+	
+	FORCE_HIGH_POWER_END;
     KEEPALIVE_STATE(NOT_BUSY);
-    _delay(3000);
 }
 #endif //TMC2130
 
 #ifdef IR_SENSOR_ANALOG
 // called also from marlin_main.cpp
-void printf_IRSensorAnalogBoardChange(bool bPCBrev03b){
-    printf_P(PSTR("Filament sensor board change detected: revision %S\n"), bPCBrev03b ? PSTR("03b or newer") : PSTR("03 or older"));
+void printf_IRSensorAnalogBoardChange(bool bPCBrev04){
+    printf_P(PSTR("Filament sensor board change detected: revision %S\n"), bPCBrev04 ? MSG_04_OR_NEWER : MSG_03_OR_OLDER);
 }
 
 static bool lcd_selftest_IRsensor(bool bStandalone)
 {
     bool bAction;
-    bool bPCBrev03b;
+    bool bPCBrev04;
     uint16_t volt_IR_int;
     float volt_IR;
 
     volt_IR_int=current_voltage_raw_IR;
-    bPCBrev03b=(volt_IR_int<((int)IRsensor_Hopen_TRESHOLD));
+    bPCBrev04=(volt_IR_int<((int)IRsensor_Hopen_TRESHOLD));
     volt_IR=VOLT_DIV_REF*((float)volt_IR_int/(1023*OVERSAMPLENR));
     printf_P(PSTR("Measured filament sensor high level: %4.2fV\n"),volt_IR);
     if(volt_IR_int < ((int)IRsensor_Hmin_TRESHOLD)){
@@ -7553,7 +7536,7 @@ static bool lcd_selftest_IRsensor(bool bStandalone)
             lcd_selftest_error(TestError::FsensorLevel,"HIGH","");
         return(false);
     }
-    lcd_show_fullscreen_message_and_wait_P(_i("Please insert filament (but not load them!) into extruder and then press the knob."));
+    lcd_show_fullscreen_message_and_wait_P(_i("Insert the filament (do not load it) into the extruder and then press the knob."));
     volt_IR_int=current_voltage_raw_IR;
     volt_IR=VOLT_DIV_REF*((float)volt_IR_int/(1023*OVERSAMPLENR));
     printf_P(PSTR("Measured filament sensor low level: %4.2fV\n"),volt_IR);
@@ -7562,9 +7545,9 @@ static bool lcd_selftest_IRsensor(bool bStandalone)
             lcd_selftest_error(TestError::FsensorLevel,"LOW","");
         return(false);
     }
-    if((bPCBrev03b?1:0)!=(uint8_t)oFsensorPCB){        // safer then "(uint8_t)bPCBrev03b"
-        printf_IRSensorAnalogBoardChange(bPCBrev03b);
-        oFsensorPCB=bPCBrev03b?ClFsensorPCB::_Rev03b:ClFsensorPCB::_Old;
+    if((bPCBrev04?1:0)!=(uint8_t)oFsensorPCB){        // safer then "(uint8_t)bPCBrev04"
+        printf_IRSensorAnalogBoardChange(bPCBrev04);
+        oFsensorPCB=bPCBrev04?ClFsensorPCB::_Rev04:ClFsensorPCB::_Old;
         eeprom_update_byte((uint8_t*)EEPROM_FSENSOR_PCB,(uint8_t)oFsensorPCB);
     }
     return(true);
@@ -7574,7 +7557,7 @@ static void lcd_detect_IRsensor(){
     bool bAction;
 
     bMenuFSDetect = true;                               // inhibits some code inside "manage_inactivity()"
-    bAction = lcd_show_fullscreen_message_yes_no_and_wait_P(_i("Is the filament loaded?"), false, false);
+    bAction = lcd_show_fullscreen_message_yes_no_and_wait_P(_i("Is filament loaded?"), false, false);
     if(bAction){
         lcd_show_fullscreen_message_and_wait_P(_i("Please unload the filament first, then repeat this action."));
         return;
@@ -7734,8 +7717,8 @@ bool lcd_selftest()
 
 		//homeaxis(X_AXIS);
 		//homeaxis(Y_AXIS);
-        current_position[X_AXIS] += pgm_read_float(bed_ref_points_4);
-		current_position[Y_AXIS] += pgm_read_float(bed_ref_points_4+1);
+        current_position[X_AXIS] = pgm_read_float(bed_ref_points_4);
+		current_position[Y_AXIS] = pgm_read_float(bed_ref_points_4+1);
 #ifdef TMC2130
 		//current_position[X_AXIS] += 0;
 		current_position[Y_AXIS] += 4;
@@ -7879,12 +7862,10 @@ static bool lcd_selfcheck_axis_sg(unsigned char axis) {
 	tmc2130_home_exit();
 	enable_endstops(true);
 
-	if (axis == X_AXIS) { //there is collision between cables and PSU cover in X axis if Z coordinate is too low
-		raise_z_above(17,true);
-		tmc2130_home_enter(Z_AXIS_MASK);
-		st_synchronize();
-		tmc2130_home_exit();
-	}
+
+	raise_z_above(MESH_HOME_Z_SEARCH);
+	st_synchronize();
+	tmc2130_home_enter(1 << axis);
 
 // first axis length measurement begin	
 	
@@ -7931,6 +7912,7 @@ static bool lcd_selfcheck_axis_sg(unsigned char axis) {
 
 	measured_axis_length[1] = abs(current_position_final - current_position_init);
 
+	tmc2130_home_exit();
 
 //end of second measurement, now check for possible errors:
 
@@ -7949,6 +7931,8 @@ static bool lcd_selfcheck_axis_sg(unsigned char axis) {
 			current_position[axis] = 0;
 			plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 			reset_crash_det(axis);
+			enable_endstops(true);
+			endstops_hit_on_purpose();
 			return false;
 		}
 	}
@@ -7967,12 +7951,13 @@ static bool lcd_selfcheck_axis_sg(unsigned char axis) {
 			current_position[axis] = 0;
 			plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 			reset_crash_det(axis);
-
+			endstops_hit_on_purpose();
 			return false;
 		}
 		current_position[axis] = 0;
 		plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 		reset_crash_det(axis);
+		endstops_hit_on_purpose();
 		return true;
 }
 #endif //TMC2130
@@ -8127,6 +8112,9 @@ static bool lcd_selfcheck_pulleys(int axis)
 			((READ(Y_MIN_PIN) ^ Y_MIN_ENDSTOP_INVERTING) == 1)) {
 			endstop_triggered = true;
 			if (current_position_init - 1 <= current_position[axis] && current_position_init + 1 >= current_position[axis]) {
+				current_position[axis] += 10;
+				plan_buffer_line_curposXYZE(manual_feedrate[0] / 60, active_extruder);
+				st_synchronize();
 				return(true);
 			}
 			else {
