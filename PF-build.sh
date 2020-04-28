@@ -56,7 +56,7 @@
 #   Some may argue that this is only used by a script, BUT as soon someone accidentally or on purpose starts Arduino IDE
 #   it will use the default Arduino IDE folders and so can corrupt the build environment.
 #
-# Version: 1.0.6-Build_21
+# Version: 1.0.6-Build_2
 # Change log:
 # 12 Jan 2019, 3d-gussner, Fixed "compiler.c.elf.flags=-w -Os -Wl,-u,vfprintf -lprintf_flt -lm -Wl,--gc-sections" in 'platform.txt'
 # 16 Jan 2019, 3d-gussner, Build_2, Added development check to modify 'Configuration.h' to prevent unwanted LCD messages that Firmware is unknown
@@ -129,7 +129,7 @@
 # 17 Feb 2020, 3d-gussner, Add aarch64 beat support to compile on Odroid-C1/2 RPi4+ 
 # 21 Apr 2020, 3d-gussner, Update the FW_COMMIT number to current commit number
 #                          Add git hash to support LCD menu
-
+# 28 Apr 2020, 3d-gussner, Added RC3 detection
 #### Start check if OSTYPE is supported
 OS_FOUND=$( command -v uname)
 
@@ -559,7 +559,7 @@ do
 	# Check development status
 	DEV_CHECK=$(grep --max-count=1 "\bFW_VERSION\b" $SCRIPT_PATH/Firmware/Configuration.h | sed -e's/  */ /g'|cut -d '"' -f2|sed 's/\.//g'|cut -d '-' -f2)
 	if [ -z "$DEV_STATUS_SELECTED" ] ; then
-		if [[ "$DEV_CHECK" == "RC1"  ||  "$DEV_CHECK" == "RC2" ]] ; then
+		if [[ "$DEV_CHECK" == "RC1"  ||  "$DEV_CHECK" == "RC2"  ||  "$DEV_CHECK" == "RC3" ]] ; then
 			DEV_STATUS="RC"
 		elif [[ "$DEV_CHECK" == "ALPHA" ]]; then
 			DEV_STATUS="ALPHA"
