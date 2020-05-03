@@ -130,7 +130,7 @@
 # 21 Apr 2020, 3d-gussner, Update the FW_COMMIT number to current commit number
 #                          Add git hash to support LCD menu
 # 28 Apr 2020, 3d-gussner, Added RC3 detection
-# 03 May 2020, 3d-gussner, Ignore git commit when compiling ALL variants.
+# 03 May 2020, 3d-gussner, Set git commit verification message to timeout after 2 sec
 #### Start check if OSTYPE is supported
 OS_FOUND=$( command -v uname)
 
@@ -553,9 +553,7 @@ do
 		echo "FW_COMMIT in Configuration.h is identical to current git commit number"
 	else
 		echo "$(tput setaf 5)FW_COMMIT $BUILD in Configuration.h is DIFFERENT to current git commit number $GIT_COMMIT_NUMBER. To cancel this process press CRTL+C and update the FW_COMMIT value.$(tput sgr0)"
-		if [ "$VARIANT" -ne "All" ]
-		 read -t 10 -p "Press Enter to continue..."
-		fi
+		 read -t 2 -p "Press Enter to continue..."
 	fi
 	# Check if the motherboard is an EINSY and if so only one hex file will generated
 	MOTHERBOARD=$(grep --max-count=1 "\bMOTHERBOARD\b" $SCRIPT_PATH/Firmware/variants/$VARIANT.h | sed -e's/  */ /g' |cut -d ' ' -f3)
