@@ -17,12 +17,12 @@ extern PGM_P sPrinterName;
 
 // Firmware version
 #define FW_VERSION "3.9.0-RC3"
-#define FW_COMMIT_NR   4124
-#define FW_COMMIT_HASH "22b2b211"
+#define FW_COMMIT_NR   4125
+#define FW_COMMIT_HASH ""
 // FW_VERSION_UNKNOWN means this is an unofficial build.
 // The firmware should only be checked into github with this symbol.
-#define FW_DEV_VERSION FW_VERSION_UNKNOWN
-#define FW_REPOSITORY "Unknown"
+#define FW_DEV_VERSION FW_VERSION_RC
+#define FW_REPOSITORY "Prusa3d"
 #define FW_VERSION_FULL FW_VERSION "-" STR(FW_COMMIT_NR)
 
 // G-code language level

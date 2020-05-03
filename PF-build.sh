@@ -56,7 +56,7 @@
 #   Some may argue that this is only used by a script, BUT as soon someone accidentally or on purpose starts Arduino IDE
 #   it will use the default Arduino IDE folders and so can corrupt the build environment.
 #
-# Version: 1.0.6-Build_22
+# Version: 1.0.6-Build_23
 # Change log:
 # 12 Jan 2019, 3d-gussner, Fixed "compiler.c.elf.flags=-w -Os -Wl,-u,vfprintf -lprintf_flt -lm -Wl,--gc-sections" in 'platform.txt'
 # 16 Jan 2019, 3d-gussner, Build_2, Added development check to modify 'Configuration.h' to prevent unwanted LCD messages that Firmware is unknown
@@ -130,6 +130,7 @@
 # 21 Apr 2020, 3d-gussner, Update the FW_COMMIT number to current commit number
 #                          Add git hash to support LCD menu
 # 28 Apr 2020, 3d-gussner, Added RC3 detection
+# 03 May 2020, 3d-gussner, Ignore git commit when compiling ALL variants.
 #### Start check if OSTYPE is supported
 OS_FOUND=$( command -v uname)
 
@@ -552,7 +553,9 @@ do
 		echo "FW_COMMIT in Configuration.h is identical to current git commit number"
 	else
 		echo "$(tput setaf 5)FW_COMMIT $BUILD in Configuration.h is DIFFERENT to current git commit number $GIT_COMMIT_NUMBER. To cancel this process press CRTL+C and update the FW_COMMIT value.$(tput sgr0)"
-		read -t 10 -p "Press Enter to continue..."
+		if [ "$VARIANT" -ne "All" ]
+		 read -t 10 -p "Press Enter to continue..."
+		fi
 	fi
 	# Check if the motherboard is an EINSY and if so only one hex file will generated
 	MOTHERBOARD=$(grep --max-count=1 "\bMOTHERBOARD\b" $SCRIPT_PATH/Firmware/variants/$VARIANT.h | sed -e's/  */ /g' |cut -d ' ' -f3)
