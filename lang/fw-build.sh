@@ -71,7 +71,7 @@ echo "OK" >&2
 echo -n " checking textaddr.txt..." >&2
 cat textaddr.txt | grep "^TEXT NF" | sed "s/[^\"]*\"//;s/\"$//" >not_used.txt
 cat textaddr.txt | grep "^ADDR NF" | sed "s/[^\"]*\"//;s/\"$//" >not_tran.txt
-if cat textaddr.txt | grep "^ADDR NF" > missing_in_lang_en.txt; then
+if cat textaddr.txt | grep "^ADDR NF" >/dev/null; then
  echo "NG! - some texts not found in lang_en.txt!"
  if [ $IGNORE_MISSING_TEXT -eq 0 ]; then
   finish 1
