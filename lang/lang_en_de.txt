@@ -212,7 +212,7 @@
 
 #MSG_CURRENT c=19 r=1
 "Current"
-"Aktuell"
+"Aktuelles"
 
 #MSG_DATE c=17 r=1
 "Date:"
