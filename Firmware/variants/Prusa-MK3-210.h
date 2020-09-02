@@ -6,7 +6,6 @@
 #include "printers.h"
 /*------------------------------------
  GENERAL SETTINGS
-"test"
  *------------------------------------*/
 
 // Printer revision

@@ -22,7 +22,7 @@
 #define CUSTOM_MENDEL_NAME "Zaribo MK25S-320"
 
 // WEH002004 OLED Display uncomment WEH002004_OLED if have this kind of display
-//#define WEH002004_OLED
+#define WEH002004_OLED
 
 // Electronics
 #define MOTHERBOARD BOARD_RAMBO_MINI_1_3

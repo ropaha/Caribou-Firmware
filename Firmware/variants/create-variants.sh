@@ -19,7 +19,7 @@
 # ModArray is an array of printer mods
 #
 #
-# Version 1.0.10
+# Version 1.0.11
 ################################################################################
 # 3 Jul 2019, vertigo235, Inital varaiants script
 # 8 Aug 2019, 3d-gussner, Modified for Zaribo needs
@@ -35,6 +35,7 @@
 # 30 Dec 2019, 3d-gussner, Fix MK2.5 y motor direction
 # 08 Feb 2020, 3d-gussner, Add Prusa MK25/s and MK3/s with OLED and with/without Bondtech
 # 19 Apr 2020, 3d-gussner, Add #define EXTRUDER_DESIGN R3 in varaiants files for Zaribo, Bear, Bondtech extruder
+# 02 Sep 2020, 3d-gussner, Fix OLED display also for Prusa printers
 ################################################################################
 
 # Constants
@@ -117,10 +118,9 @@ for COMPANY in ${CompanyArray[@]}; do
 				sed -i -e "s/^#define Z_MAX_POS 210*/#define Z_MAX_POS ${HEIGHT}/g" ${VARIANT}
 				# Disable PSU_Delta
 				sed -i -e "s/^#define PSU_Delta*/\/\/#define PSU_Delta/g" ${VARIANT}
-			elif [ $COMPANY == "Prusa" ]; then
-				# Display Type 
-				sed -i -e "s/\/\/#define WEH002004_OLED*/#define WEH002004_OLED/g" ${VARIANT}
 			fi
+				# Display Type 
+			sed -i -e "s/\/\/#define WEH002004_OLED*/#define WEH002004_OLED/g" ${VARIANT}
 		done
 	done
 done		
