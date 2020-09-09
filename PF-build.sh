@@ -120,7 +120,7 @@
 # 15 Dec 2019, 3d-gussner, Prepare for switch to Prusa3d/PF-build-env repository
 # 15 Dec 2019, 3d-gussner, Fix Audrino user preferences for the chosen board.
 # 17 Dec 2019, 3d-gussner, Fix "timer0_fract = 0" warning by using Arduino_boards v1.0.3
-# 07 Feb 2020, 3d-gussner, Added branding_and debranding_Zaribo.sh scripts to keep firmware as close as possible to origin
+# 07 Feb 2020, 3d-gussner, Added branding_Zaribo.sh and debranding_Zaribo.sh scripts to keep firmware as close as possible to origin
 #                          this should help with merge issues we had in the past.
 # 08 Feb 2019, 3d-gussner, Begin to add stock Prusa printers with OLED and with/without Bondtech
 #						   Still in progress.
