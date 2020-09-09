@@ -6,7 +6,9 @@
 
 #include "config.h"
 #include <inttypes.h>
-//#include <stdio.h>
+#ifdef DEBUG_SEC_LANG
+    #include <stdio.h>
+#endif //DEBUG_SEC_LANG
 
 #define PROTOCOL_VERSION "1.0"
 
@@ -95,6 +97,7 @@ typedef struct
 #define LANG_CODE_ES 0x6573 //!<'es'
 #define LANG_CODE_FR 0x6672 //!<'fr'
 #define LANG_CODE_IT 0x6974 //!<'it'
+#define LANG_CODE_NL 0x6e6c //!<'nl'
 #define LANG_CODE_PL 0x706c //!<'pl'
 ///@}
 

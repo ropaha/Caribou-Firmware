@@ -1,3 +1,4 @@
+//! @file
 // Based on the OptiBoot project
 // https://github.com/Optiboot/optiboot
 // Licence GLP 2 or later.
@@ -97,6 +98,7 @@ static const char entry_magic_cfm    [] PROGMEM = "w25x20cl_cfm\n";
 struct block_t;
 extern struct block_t *block_buffer;
 
+//! @brief Enter an STK500 compatible Optiboot boot loader waiting for flashing the languages to an external flash memory.
 void optiboot_w25x20cl_enter()
 {
   if (boot_app_flags & BOOT_APP_FLG_USER0) return;
@@ -256,11 +258,11 @@ void optiboot_w25x20cl_enter()
         uint32_t addr = (((uint32_t)rampz) << 16) | address;
         // During a single bootloader run, only erase a 64kB block once.
         // An 8bit bitmask 'pages_erased' covers 512kB of FLASH memory.
-        if (address == 0 && (pages_erased & (1 << addr)) == 0) {
+        if ((address == 0) && (pages_erased & (1 << (addr >> 16))) == 0) {
           w25x20cl_wait_busy();
           w25x20cl_enable_wr();
           w25x20cl_block64_erase(addr);
-          pages_erased |= (1 << addr);
+          pages_erased |= (1 << (addr >> 16));
         }
         w25x20cl_wait_busy();
         w25x20cl_enable_wr();

@@ -1,3 +1,5 @@
+//! @file
+
 #include "Marlin.h"
 
 #ifdef TMC2130
@@ -22,7 +24,7 @@ uint8_t tmc2130_current_h[4] = TMC2130_CURRENTS_H;
 uint8_t tmc2130_current_r[4] = TMC2130_CURRENTS_R;
 
 //running currents for homing
-uint8_t tmc2130_current_r_home[4] = {8, 10, 20, 18};
+uint8_t tmc2130_current_r_home[4] = TMC2130_CURRENTS_R_HOME;
 
 
 //pwm_ampl
@@ -38,7 +40,7 @@ uint8_t tmc2130_mres[4] = {0, 0, 0, 0}; //will be filed at begin of init
 
 
 uint8_t tmc2130_sg_thr[4] = {TMC2130_SG_THRS_X, TMC2130_SG_THRS_Y, TMC2130_SG_THRS_Z, TMC2130_SG_THRS_E};
-uint8_t tmc2130_sg_thr_home[4] = {3, 3, TMC2130_SG_THRS_Z, TMC2130_SG_THRS_E};
+uint8_t tmc2130_sg_thr_home[4] = TMC2130_SG_THRS_HOME;
 
 
 uint8_t tmc2130_sg_homing_axes_mask = 0x00;
@@ -142,8 +144,11 @@ uint16_t __tcoolthrs(uint8_t axis)
 	}
 	return 0;
 }
-
+#ifdef PSU_Delta
+void tmc2130_init(bool bSupressFlag)
+#else
 void tmc2130_init()
+#endif
 {
 //	DBG(_n("tmc2130_init(), mode=%S\n"), tmc2130_mode?_n("STEALTH"):_n("NORMAL"));
 	WRITE(X_TMC2130_CS, HIGH);
@@ -158,7 +163,7 @@ void tmc2130_init()
 	SET_INPUT(Y_TMC2130_DIAG);
 	SET_INPUT(Z_TMC2130_DIAG);
 	SET_INPUT(E0_TMC2130_DIAG);
-	for (int axis = 0; axis < 2; axis++) // X Y axes
+	for (uint_least8_t axis = 0; axis < 2; axis++) // X Y axes
 	{
 		tmc2130_setup_chopper(axis, tmc2130_mres[axis], tmc2130_current_h[axis], tmc2130_current_r[axis]);
 		tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN, 0x00000000);
@@ -169,7 +174,7 @@ void tmc2130_init()
 		tmc2130_wr_TPWMTHRS(axis, TMC2130_TPWMTHRS);
 		//tmc2130_wr_THIGH(axis, TMC2130_THIGH);
 	}
-	for (int axis = 2; axis < 3; axis++) // Z axis
+	for (uint_least8_t axis = 2; axis < 3; axis++) // Z axis
 	{
 		tmc2130_setup_chopper(axis, tmc2130_mres[axis], tmc2130_current_h[axis], tmc2130_current_r[axis]);
 		tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN, 0x00000000);
@@ -183,7 +188,7 @@ void tmc2130_init()
 		tmc2130_wr_TPWMTHRS(axis, TMC2130_TPWMTHRS);
 #endif //TMC2130_STEALTH_Z
 	}
-	for (int axis = 3; axis < 4; axis++) // E axis
+	for (uint_least8_t axis = 3; axis < 4; axis++) // E axis
 	{
 		tmc2130_setup_chopper(axis, tmc2130_mres[axis], tmc2130_current_h[axis], tmc2130_current_r[axis]);
 		tmc2130_wr(axis, TMC2130_REG_TPOWERDOWN, 0x00000000);
@@ -215,6 +220,11 @@ void tmc2130_init()
 #endif //TMC2130_LINEARITY_CORRECTION_XYZ
 	tmc2130_set_wave(E_AXIS, 247, tmc2130_wave_fac[E_AXIS]);
 #endif //TMC2130_LINEARITY_CORRECTION
+
+#ifdef PSU_Delta
+     if(!bSupressFlag)
+          check_force_z();
+#endif // PSU_Delta
 
 }
 
@@ -383,7 +393,7 @@ void tmc2130_check_overtemp()
 	static uint32_t checktime = 0;
 	if (_millis() - checktime > 1000 )
 	{
-		for (int i = 0; i < 4; i++)
+		for (uint_least8_t i = 0; i < 4; i++)
 		{
 			uint32_t drv_status = 0;
 			skip_debug_msg = true;
@@ -392,7 +402,7 @@ void tmc2130_check_overtemp()
 			{ // BIT 26 - over temp prewarning ~120C (+-20C)
 				SERIAL_ERRORRPGM(MSG_TMC_OVERTEMP);
 				SERIAL_ECHOLN(i);
-				for (int j = 0; j < 4; j++)
+				for (uint_least8_t j = 0; j < 4; j++)
 					tmc2130_wr(j, TMC2130_REG_CHOPCONF, 0x00010000);
 				kill(MSG_TMC_OVERTEMP);
 			}
@@ -417,7 +427,7 @@ void tmc2130_check_overtemp()
 
 void tmc2130_setup_chopper(uint8_t axis, uint8_t mres, uint8_t current_h, uint8_t current_r)
 {
-	uint8_t intpol = 1;
+	uint8_t intpol = (mres != 0); // intpol to 256 only if microsteps aren't 256
 	uint8_t toff = tmc2130_chopper_config[axis].toff; // toff = 3 (fchop = 27.778kHz)
 	uint8_t hstrt = tmc2130_chopper_config[axis].hstr; //initial 4, modified to 5
 	uint8_t hend = tmc2130_chopper_config[axis].hend; //original value = 1
@@ -590,7 +600,7 @@ void tmc2130_wr_THIGH(uint8_t axis, uint32_t val32)
 
 uint8_t tmc2130_usteps2mres(uint16_t usteps)
 {
-	uint8_t mres = 8; while (mres && (usteps >>= 1)) mres--;
+	uint8_t mres = 8; while (usteps >>= 1) mres--;
 	return mres;
 }
 
@@ -715,6 +725,9 @@ uint8_t tmc2130_get_pwr(uint8_t axis)
 	return 0;
 }
 
+//! @par pwr motor power
+//!  * 0 disabled
+//!  * non-zero enabled
 void tmc2130_set_pwr(uint8_t axis, uint8_t pwr)
 {
 	switch (axis)
@@ -794,15 +807,15 @@ void tmc2130_goto_step(uint8_t axis, uint8_t step, uint8_t dir, uint16_t delay_u
 	{
 		dir = tmc2130_get_inv(axis)?0:1;
 		int steps = (int)step - (int)(mscnt >> shift);
-		if (steps < 0)
-		{
-			dir ^= 1;
-			steps = -steps;
-		}
 		if (steps > static_cast<int>(cnt / 2))
 		{
 			dir ^= 1;
-			steps = cnt - steps;
+			steps = cnt - steps; // This can create a negative step value
+		}
+        if (steps < 0)
+		{
+			dir ^= 1;
+			steps = -steps;
 		}
 		cnt = steps;
 	}
@@ -997,6 +1010,79 @@ bool tmc2130_home_calibrate(uint8_t axis)
 	else if (axis == Y_AXIS) eeprom_update_byte((uint8_t*)EEPROM_TMC2130_HOME_Y_ORIGIN, tmc2130_home_origin[Y_AXIS]);
 	return true;
 }
+
+
+//! @brief Translate current to tmc2130 vsense and IHOLD or IRUN
+//! @param cur current in mA
+//! @return 0 .. 63
+//! @n most significant bit is CHOPCONF vsense bit (sense resistor voltage based current scaling)
+//! @n rest is to be used in IRUN or IHOLD register
+//!
+//! | mA   | trinamic register | note |
+//! | ---  | ---               | ---  |
+//! |    0 |  0 | doesn't mean current off, lowest current is 1/32 current with vsense low range |
+//! |   30 |  1 | |
+//! |   40 |  2 | |
+//! |   60 |  3 | |
+//! |   90 |  4 | |
+//! |  100 |  5 | |
+//! |  120 |  6 | |
+//! |  130 |  7 | |
+//! |  150 |  8 | |
+//! |  180 |  9 | |
+//! |  190 | 10 | |
+//! |  210 | 11 | |
+//! |  230 | 12 | |
+//! |  240 | 13 | |
+//! |  250 | 13 | |
+//! |  260 | 14 | |
+//! |  280 | 15 | |
+//! |  300 | 16 | |
+//! |  320 | 17 | |
+//! |  340 | 18 | |
+//! |  350 | 19 | |
+//! |  370 | 20 | |
+//! |  390 | 21 | |
+//! |  410 | 22 | |
+//! |  430 | 23 | |
+//! |  450 | 24 | |
+//! |  460 | 25 | |
+//! |  480 | 26 | |
+//! |  500 | 27 | |
+//! |  520 | 28 | |
+//! |  535 | 29 | |
+//! |  N/D | 30 | extruder default |
+//! |  540 | 33 | |
+//! |  560 | 34 | |
+//! |  580 | 35 | |
+//! |  590 | 36 | farm mode extruder default |
+//! |  610 | 37 | |
+//! |  630 | 38 | |
+//! |  640 | 39 | |
+//! |  660 | 40 | |
+//! |  670 | 41 | |
+//! |  690 | 42 | |
+//! |  710 | 43 | |
+//! |  720 | 44 | |
+//! |  730 | 45 | |
+//! |  760 | 46 | |
+//! |  770 | 47 | |
+//! |  790 | 48 | |
+//! |  810 | 49 | |
+//! |  820 | 50 | |
+//! |  840 | 51 | |
+//! |  850 | 52 | |
+//! |  870 | 53 | |
+//! |  890 | 54 | |
+//! |  900 | 55 | |
+//! |  920 | 56 | |
+//! |  940 | 57 | |
+//! |  950 | 58 | |
+//! |  970 | 59 | |
+//! |  980 | 60 | |
+//! | 1000 | 61 | |
+//! | 1020 | 62 | |
+//! | 1029 | 63 | |
 
 uint8_t tmc2130_cur2val(float cur)
 {
