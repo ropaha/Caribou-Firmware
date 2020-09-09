@@ -5,7 +5,7 @@ if [ -z "$SCRIPT_PATH" ]; then
 fi
 
 	# Branding
-	# set Zaribo url
+	# set Caribou3d url
 	sed -i -e 's/"prusa3d.com"/"Caribou3d.com"/g' $SCRIPT_PATH/Firmware/ultralcd.cpp
 	# set Company name
 	sed -i -e 's/"\\n Original Prusa i3\\n   Prusa Research"/"\\n Caribou3d Research\\n   and Development"/g' $SCRIPT_PATH/Firmware/Marlin_main.cpp
