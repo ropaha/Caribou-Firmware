@@ -666,7 +666,7 @@ do
 
 	# Branding
 	export SCRIPT_PATH=$SCRIPT_PATH
-	$SCRIPT_PATH/branding_Zaribo.sh
+	$SCRIPT_PATH/branding_Caribou.sh
 	
 	#Prepare english only or multilanguage version to be build
 	if [ $LANGUAGES == "ALL" ]; then
@@ -798,7 +798,7 @@ do
 	sed -i -- "s/^#define LANG_MODE *0/#define LANG_MODE              1/g" $SCRIPT_PATH/Firmware/config.h
 	#sleep 5
 	# debranding
-	$SCRIPT_PATH/debranding_Zaribo.sh
+	$SCRIPT_PATH/debranding_Caribou.sh
 done
 
 # Switch to hex path and list build files
