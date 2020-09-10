@@ -136,6 +136,9 @@
 #                          After compiling All multilanguage vairants it makes it easier to find missing or unused transltions.
 # 12 May 2020, DRracer   , Cleanup double MK2/s MK25/s `not_tran` and `not_used` files
 # 13 May 2020, leptun    , If cleanup files do not exist don't try to.
+# 10 Sep 2020, 3d-gussner, Rebranding Caribou3d
+#                          Cleanup Prusa-Firmware-build folder every time
+#                          start sort.sh when ALL languages are selected
 #
 #### Start check if OSTYPE is supported
 OS_FOUND=$( command -v uname)
@@ -455,7 +458,7 @@ if [ -z "$1" ] ; then
 	PS3="Select a variant: "
 	while IFS= read -r -d $'\0' f; do
 		options[i++]="$f"
-	done < <(find Firmware/variants/ -maxdepth 1 -type f -name "*-???.h" -print0 )
+	done < <(find Firmware/variants/ -maxdepth 1 -type f -name "*-MK*.h" -print0 )
 	select opt in "${options[@]}" "All" "Quit"; do
 		case $opt in
 			*.h)
@@ -699,13 +702,14 @@ do
 	echo "Start to build Prusa Firmware ..."
 	echo "Using variant $VARIANT$(tput setaf 3)"
 	#sleep 2
+	#clean Prusa-Firmware-build folder
+	rm -r $SCRIPT_PATH/../Prusa-Firmware-build/*
 	#$BUILD_ENV_PATH/arduino-builder -dump-prefs -debug-level 10 -compile -hardware $ARDUINO/hardware -hardware $ARDUINO/portable/packages -tools $ARDUINO/tools-builder -tools $ARDUINO/hardware/tools/avr -tools $ARDUINO/portable/packages -built-in-libraries $ARDUINO/libraries -libraries $ARDUINO/portable/sketchbook/libraries -fqbn=$BOARD_PACKAGE_NAME:avr:$BOARD -build-path=$BUILD_PATH -warnings=all $SCRIPT_PATH/Firmware/Firmware.ino || exit 14
 	$BUILD_ENV_PATH/arduino-builder -compile -hardware $ARDUINO/hardware -hardware $ARDUINO/portable/packages -tools $ARDUINO/tools-builder -tools $ARDUINO/hardware/tools/avr -tools $ARDUINO/portable/packages -built-in-libraries $ARDUINO/libraries -libraries $ARDUINO/portable/sketchbook/libraries -fqbn=$BOARD_PACKAGE_NAME:avr:$BOARD -build-path=$BUILD_PATH -warnings=all $SCRIPT_PATH/Firmware/Firmware.ino || exit 14
 	echo "$(tput sgr 0)"
 
 	if [ $LANGUAGES ==  "ALL" ]; then
 		echo "$(tput setaf 2)"
-
 		echo "Building multi language firmware" $MULTI_LANGUAGE_CHECK
 		echo "$(tput sgr 0)"
 		#sleep 2
@@ -800,7 +804,11 @@ do
 	# debranding
 	$SCRIPT_PATH/debranding_Caribou.sh
 done
-
+# Sort hexfiles only when build ALL is selected
+if [ $LANGUAGES ==  "ALL" ]; then
+	cd $SCRIPT_PATH
+	./sort.sh ../$OUTPUT_FOLDER/ ../$OUTPUT_FOLDER/../../FW$FW-Build$BUILD-sorted
+fi
 # Switch to hex path and list build files
 cd $SCRIPT_PATH
 cd ..
