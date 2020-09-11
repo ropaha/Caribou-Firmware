@@ -468,6 +468,7 @@ if [ -z "$1" ] ; then
 				;;
 			"All")
 				VARIANT="All"
+				ALL_VARIANTS="All"
 				VARIANTS=${options[*]}
 				break
 				;;
@@ -562,7 +563,9 @@ do
 		echo "FW_COMMIT in Configuration.h is identical to current git commit number"
 	else
 		echo "$(tput setaf 5)FW_COMMIT $BUILD in Configuration.h is DIFFERENT to current git commit number $GIT_COMMIT_NUMBER. To cancel this process press CRTL+C and update the FW_COMMIT value.$(tput sgr0)"
-		 read -t 2 -p "Press Enter to continue..."
+		if [ -z "$ALL_VARIANTS" ]; then
+			read -t 2 -p "Press Enter to continue..."
+		fi
 	fi
 	# Check if the motherboard is an EINSY and if so only one hex file will generated
 	MOTHERBOARD=$(grep --max-count=1 "\bMOTHERBOARD\b" $SCRIPT_PATH/Firmware/variants/$VARIANT.h | sed -e's/  */ /g' |cut -d ' ' -f3)
@@ -620,14 +623,18 @@ do
 			echo "$i"
 			ls -1 $SCRIPT_PATH/../$OUTPUT_FOLDER/FW$FW-$VARIANT-Build$BUILD-$MULTI_CHECK.hex | xargs -n1 basename
 			echo "$(tput setaf 6)This hex file to be compiled already exists! To cancel this process press CRTL+C and rename existing hex file.$(tput sgr 0)"
-			read -t 10 -p "Press Enter to continue..."
+			if [ -z "$ALL_VARIANTS" ]; then
+				read -t 10 -p "Press Enter to continue..."
+			fi
 		fi
 	done
 	if [[ -f "$SCRIPT_PATH/../$OUTPUT_FOLDER/FW$FW-$VARIANT-Build$BUILD-EN.hex"  &&  "$LANGUAGES" == "EN_ONLY" ]]; then
 		echo ""
 		ls -1 $SCRIPT_PATH/../$OUTPUT_FOLDER/FW$FW-$VARIANT-Build$BUILD-EN.hex | xargs -n1 basename
 		echo "$(tput setaf 6)This hex file to be compiled already exists! To cancel this process press CRTL+C and rename existing hex file.$(tput sgr 0)"
-		read -t 10 -p "Press Enter to continue..."
+		if [ -z "$ALL_VARIANTS" ]; then
+			read -t 10 -p "Press Enter to continue..."
+		fi
 	fi
 #	if [[ -f "$SCRIPT_PATH/../$OUTPUT_FOLDER/FW$FW-$VARIANT-Build$BUILD.zip"  &&  "$LANGUAGES" == "ALL" ]]; then
 #		echo ""
@@ -653,7 +660,9 @@ do
 		cp -f $SCRIPT_PATH/Firmware/variants/$VARIANT.h $SCRIPT_PATH/Firmware/Configuration_prusa.h || exit 28
 	else
 		echo "$(tput setaf 6)Configuration_prusa.h already exist it will be overwritten in 10 seconds by the chosen variant.$(tput sgr 0)"
-		read -t 10 -p "Press Enter to continue..."
+		if [ -z "$ALL_VARIANTS" ]; then
+			read -t 10 -p "Press Enter to continue..."
+		fi
 		cp -f $SCRIPT_PATH/Firmware/variants/$VARIANT.h $SCRIPT_PATH/Firmware/Configuration_prusa.h || exit 28
 	fi
 
@@ -721,7 +730,9 @@ do
 		if [ -f "lang_en.tmp" ]; then
 			echo ""
 			echo "$(tput setaf 6)Previous lang build files already exist these will be cleaned up in 10 seconds.$(tput sgr 0)"
-			read -t 10 -p "Press Enter to continue..."
+			if [ -z "$ALL_VARIANTS" ]; then
+				read -t 10 -p "Press Enter to continue..."
+			fi
 			echo "$(tput setaf 3)"
 			./lang-clean.sh
 			echo "$(tput sgr 0)"
@@ -729,7 +740,9 @@ do
 		if [ -f "progmem.out" ]; then
 			echo ""
 			echo "$(tput setaf 6)Previous firmware build files already exist these will be cleaned up in 10 seconds.$(tput sgr 0)"
-			read -t 10 -p "Press Enter to continue..."
+			if [ -z "$ALL_VARIANTS" ]; then
+				read -t 10 -p "Press Enter to continue..."
+			fi
 			echo "$(tput setaf 3)"
 			./fw-clean.sh
 			echo "$(tput sgr 0)"
@@ -805,9 +818,8 @@ do
 	$SCRIPT_PATH/debranding_Caribou.sh
 done
 # Sort hexfiles only when build ALL is selected
-if [ $LANGUAGES ==  "ALL" ]; then
-	cd $SCRIPT_PATH
-	./sort.sh ../$OUTPUT_FOLDER/ ../$OUTPUT_FOLDER/../../FW$FW-Build$BUILD-sorted
+if [ $ALL_VARIANTS == "All" ]; then
+	$SCRIPT_PATH/sort.sh ../$OUTPUT_FOLDER/../ ../$OUTPUT_FOLDER/../../FW$FW-Build$BUILD-sorted/
 fi
 # Switch to hex path and list build files
 cd $SCRIPT_PATH
