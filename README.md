@@ -1,6 +1,6 @@
 # Caribou Firmware MK3
 
-This repository contains the source code and the development versions of the firmware running on the [Caribou](https://caribou3d.com/en/3-3d-printers) 220/320/420 (MK3S/MK3/MK2.5S/MK2.5) line of printers. The original [Prusa Printer](https://www.prusa3d.com/) ist also supported.
+This repository contains the source code and the development versions of the firmware running on the [Caribou](https://caribou3d.com/en/3-3d-printers) 220/320/420 (MK3S/MK3/MK2.5S/MK2.5) line of printers. The original [Prusa Printer](https://www.prusa3d.com/) is also supported.
 
 The latest official builds can be downloaded from [Caribou3d](https://caribou3d.com/en/content/10-caribou-firmware). Pre-built development releases are also [available here](https://github.com/Caribou3d/Caribou-Firmware/releases).
 
