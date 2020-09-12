@@ -39,7 +39,7 @@
 //#define E3D_PT100_BED_WITH_AMP
 //#define E3D_PT100_BED_NO_AMP
 
-//Extruder Design R3 based printer, like Zaribo, Bear, Bondtech extruder
+//Extruder Design R3 based printer, like Caribou, Bear, Bondtech extruder
 //#define EXTRUDER_DESIGN_R3
 //#define BONDTECH_MK3S
 //#define BONDTECH_MOSQUITO
