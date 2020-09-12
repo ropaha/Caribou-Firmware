@@ -22,7 +22,7 @@
 // Printer name
 #define CUSTOM_MENDEL_NAME "Caribou420-MK3"
 
-//Exrtuder Design R3 based printer, like Zaribo, Bear, Bondtech extruder
+//Exrtuder Design R3 based printer, like Caribou, Bear, Bondtech extruder
 #define EXTRUDER_DESIGN_R3
 
 // WEH002004 OLED Display uncomment WEH002004_OLED if have this kind of display
@@ -39,7 +39,7 @@
 //#define E3D_PT100_BED_WITH_AMP
 //#define E3D_PT100_BED_NO_AMP
 
-//Extruder Design R3 based printer, like Zaribo, Bear, Bondtech extruder
+//Extruder Design R3 based printer, like Caribou, Bear, Bondtech extruder
 #define EXTRUDER_DESIGN_R3
 //#define BONDTECH_MK3S
 //#define BONDTECH_MOSQUITO

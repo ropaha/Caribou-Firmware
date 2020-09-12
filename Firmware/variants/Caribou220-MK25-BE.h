@@ -21,7 +21,7 @@
 // Printer name
 #define CUSTOM_MENDEL_NAME "Caribou220-MK25-BE"
 
-//Exrtuder Design R3 based printer, like Zaribo, Bear, Bondtech extruder
+//Exrtuder Design R3 based printer, like Caribou, Bear, Bondtech extruder
 #define EXTRUDER_DESIGN_R3
 
 // Electronics

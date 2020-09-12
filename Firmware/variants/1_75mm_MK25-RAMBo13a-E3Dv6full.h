@@ -21,7 +21,7 @@
 // Printer name
 #define CUSTOM_MENDEL_NAME "Prusa i3 MK2.5"
 
-//Exrtuder Design R3 based printer, like Zaribo, Bear, Bondtech extruder
+//Exrtuder Design R3 based printer, like Caribou, Bear, Bondtech extruder
 //#define EXTRUDER_DESIGN_R3
 
 // Electronics
