@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##################################################################
-# This script sorts generated Zaribo hex files in differnt folders
+# This script sorts generated Caribou hex files in differnt folders
 #
 # You can add two arguments <Start_path> <Destiontion_Path>
 # <Start_path> defines to folder to be searched
@@ -15,94 +15,92 @@
 # Change log
 # 17 Dec 2019, 3d-gussner, Initial version
 # 18 Dec 2019, 3d-gussner, add arguments $1 = Start path and $2 Destination path
-# 17 May 2020, 3d-gussner,  Sorting of stock Prusa + OLED was missing thanks to @n4mb3r0n3
+# 17 May 2020, 3d-gussner, Sorting of stock Prusa + OLED was missing thanks to @n4mb3r0n3
+# 09 Sep 2020, 3d-gussner, Rebranding Caribou3d
+# 10 Sep 2020, 3d-gussner, fix some sorting issues due to new naming convention
 #
 # Folder tree:
 #.
-#├── Prusa-MK25
-#│   └── 210
-#│       └── BONDTECH
-#│           ├── E3DV6
-#│           ├── MOSQUITO
-#│           └── MOSQUITO_MAGNUM
-#├── Prusa-MK25S
-#│   └── 210
-#│       └── BONDTECH
-#│           ├── E3DV6
-#│           ├── MOSQUITO
-#│           └── MOSQUITO_MAGNUM
-#├── Prusa-MK3
-#│   └── 210
-#│       └── BONDTECH
-#│           ├── E3DV6
-#│           ├── MOSQUITO
-#│           └── MOSQUITO_MAGNUM
-#├── Prusa-MK3S
-#│   └── 210
-#│       └── BONDTECH
-#│           ├── E3DV6
-#│           ├── MOSQUITO
-#│           └── MOSQUITO_MAGNUM
-#├── Zaribo-MK25
-#│   ├── 220
-#│   │   └── BONDTECH
-#│   │       ├── E3DV6
-#│   │       ├── MOSQUITO
-#│   │       └── MOSQUITO_MAGNUM
-#│   ├── 320
-#│   │   └── BONDTECH
-#│   │       ├── E3DV6
-#│   │       ├── MOSQUITO
-#│   │       └── MOSQUITO_MAGNUM
-#│   └── 420
-#│       └── BONDTECH
-#│           ├── E3DV6
-#│           ├── MOSQUITO
-#│           └── MOSQUITO_MAGNUM
-#├── Zaribo-MK25S
-#│   ├── 220
-#│   │   └── BONDTECH
-#│   │       ├── E3DV6
-#│   │       ├── MOSQUITO
-#│   │       └── MOSQUITO_MAGNUM
-#│   ├── 320
-#│   │   └── BONDTECH
-#│   │       ├── E3DV6
-#│   │       ├── MOSQUITO
-#│   │       └── MOSQUITO_MAGNUM
-#│   └── 420
-#│       └── BONDTECH
-#│           ├── E3DV6
-#│           ├── MOSQUITO
-#│           └── MOSQUITO_MAGNUM
-#├── Zaribo-MK3
-#│   ├── 220
-#│   │   └── BONDTECH
-#│   │       ├── E3DV6
-#│   │       ├── MOSQUITO
-#│   │       └── MOSQUITO_MAGNUM
-#│   ├── 320
-#│   │   └── BONDTECH
-#│   │       ├── E3DV6
-#│   │       ├── MOSQUITO
-#│   │       └── MOSQUITO_MAGNUM
-#│   └── 420
-#│       └── BONDTECH
-#│           ├── E3DV6
-#│           ├── MOSQUITO
-#│           └── MOSQUITO_MAGNUM
-#└── Zaribo-MK3S
-#    ├── 220
-#    │   └── BONDTECH
-#    │       ├── E3DV6
-#    │       ├── MOSQUITO
-#    │       └── MOSQUITO_MAGNUM
-#    ├── 320
-#    │   └── BONDTECH
-#    │       ├── E3DV6
-#    │       ├── MOSQUITO
-#    │       └── MOSQUITO_MAGNUM
-#    └── 420
+#├── Caribou220
+#│   ├── MK25
+#│   │   └── BONDTECH
+#│   │       ├── E3DV6
+#│   │       ├── MOSQUITO
+#│   │       └── MOSQUITO_MAGNUM
+#│   ├── MK25S
+#│   │   └── BONDTECH
+#│   │       ├── E3DV6
+#│   │       ├── MOSQUITO
+#│   │       └── MOSQUITO_MAGNUM
+#│   ├── MK3
+#│   │   └── BONDTECH
+#│   │       ├── E3DV6
+#│   │       ├── MOSQUITO
+#│   │       └── MOSQUITO_MAGNUM
+#│   └── MK3S
+#│       └── BONDTECH
+#│           ├── E3DV6
+#│           ├── MOSQUITO
+#│           └── MOSQUITO_MAGNUM
+#├── Caribou320
+#│   ├── MK25
+#│   │   └── BONDTECH
+#│   │       ├── E3DV6
+#│   │       ├── MOSQUITO
+#│   │       └── MOSQUITO_MAGNUM
+#│   ├── MK25S
+#│   │   └── BONDTECH
+#│   │       ├── E3DV6
+#│   │       ├── MOSQUITO
+#│   │       └── MOSQUITO_MAGNUM
+#│   ├── MK3
+#│   │   └── BONDTECH
+#│   │       ├── E3DV6
+#│   │       ├── MOSQUITO
+#│   │       └── MOSQUITO_MAGNUM
+#│   └── MK3S
+#│       └── BONDTECH
+#│           ├── E3DV6
+#│           ├── MOSQUITO
+#│           └── MOSQUITO_MAGNUM
+#├── Caribou420
+#│   ├── MK25
+#│   │   └── BONDTECH
+#│   │       ├── E3DV6
+#│   │       ├── MOSQUITO
+#│   │       └── MOSQUITO_MAGNUM
+#│   ├── MK25S
+#│   │   └── BONDTECH
+#│   │       ├── E3DV6
+#│   │       ├── MOSQUITO
+#│   │       └── MOSQUITO_MAGNUM
+#│   ├── MK3
+#│   │   └── BONDTECH
+#│   │       ├── E3DV6
+#│   │       ├── MOSQUITO
+#│   │       └── MOSQUITO_MAGNUM
+#│   └── MK3S
+#│       └── BONDTECH
+#│           ├── E3DV6
+#│           ├── MOSQUITO
+#│           └── MOSQUITO_MAGNUM
+#└── Prusa210
+#    ├── MK25
+#    │   └── BONDTECH
+#    │       ├── E3DV6
+#    │       ├── MOSQUITO
+#    │       └── MOSQUITO_MAGNUM
+#    ├── MK25S
+#    │   └── BONDTECH
+#    │       ├── E3DV6
+#    │       ├── MOSQUITO
+#    │       └── MOSQUITO_MAGNUM
+#    ├── MK3
+#    │   └── BONDTECH
+#    │       ├── E3DV6
+#    │       ├── MOSQUITO
+#    │       └── MOSQUITO_MAGNUM
+#    └── MK3S
 #        └── BONDTECH
 #            ├── E3DV6
 #            ├── MOSQUITO
@@ -110,7 +108,7 @@
 #
 # Set arrays for script
 # Array of companies
-declare -a CompanyArray=( "Zaribo" "Prusa" )
+declare -a CompanyArray=( "Caribou" "Prusa" )
 # Array of printer types
 declare -a TypesArray=( MK3S MK3 MK25S MK25 )
 # Array of printer heights
@@ -150,7 +148,7 @@ for COMPANY in ${CompanyArray[@]}; do
 			# Loop for Bondtech types
 			for BONDTECH_TYPE in ${BondtechArray[@]}; do
 				# Create all directories, see Folder tree above
-				mkdir -p $Destination_Path/$COMPANY-$TYPE/$HEIGHT/BONDTECH/$BONDTECH_TYPE
+				mkdir -p $Destination_Path/$COMPANY$HEIGHT/$TYPE/BONDTECH/$BONDTECH_TYPE
 				# Link files short names to folder long names
 				case $BONDTECH_TYPE in
 					E3DV6)
@@ -174,12 +172,12 @@ for COMPANY in ${CompanyArray[@]}; do
 				esac
 				# Find all Bondtech hex files and copy them to destination folder sorted by Type, Height and Bontech txpe.
 				# BONDTECH_SHORT -> Bondtech folder name
-				find -L $Start_Path -name "*$COMPANY-$TYPE-$BONDTECH_SHORT-$HEIGHT*" -type f -not -path "$Destination_Path/$COMPANY-$TYPE/*" -exec cp {} $Destination_Path/$COMPANY-$TYPE/$HEIGHT/BONDTECH/$BONDTECH_TYPE \;
+				find -L $Start_Path -name "*$COMPANY$HEIGHT-$TYPE-$BONDTECH_SHORT-Build*" -type f -not -path "$Destination_Path/$COMPANY$HEIGHT/$TYPE/*" -exec cp {} $Destination_Path/$COMPANY$HEIGHT/$TYPE/BONDTECH/$BONDTECH_TYPE \;
 				# Find other Bondtech hex files and copy them to destination folder sorted By Type, Height and Bontech txpe.
 				# BONDTECH_SHORT2 -> Bondtech folder name
-				find -L $Start_Path -name "*$COMPANY-$TYPE-$BONDTECH_SHORT2-$HEIGHT*" -type f -not -path "$Destination_Path/$COMPANY-$TYPE/*" -exec cp {} $Destination_Path/$COMPANY-$TYPE/$HEIGHT/BONDTECH/$BONDTECH_TYPE \;
+				find -L $Start_Path -name "*$COMPANY$HEIGHT-$TYPE-$BONDTECH_SHORT2-Build*" -type f -not -path "$Destination_Path/$COMPANY$HEIGH-$TYPE/*" -exec cp {} $Destination_Path/$COMPANY$HEIGHT/$TYPE/BONDTECH/$BONDTECH_TYPE \;
 				# Find rest hex files and copy them to destination folder sorted by Type and Height
-				find -L $Start_Path -name "*$COMPANY-$TYPE-$HEIGHT*" -type f -not -path "$Destination_Path/$COMPANY-$TYPE/*" -exec cp {} $Destination_Path/$COMPANY-$TYPE/$HEIGHT \;
+				find -L $Start_Path -name "*$COMPANY$HEIGHT-$TYPE-Build*" -type f -not -path "$Destination_Path/$COMPANY$HEIGHT/$TYPE/*" -exec cp {} $Destination_Path/$COMPANY$HEIGHT/$TYPE \;
 			done
 		done
 	done

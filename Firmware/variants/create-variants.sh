@@ -36,6 +36,7 @@
 # 08 Feb 2020, 3d-gussner, Add Prusa MK25/s and MK3/s with OLED and with/without Bondtech
 # 19 Apr 2020, 3d-gussner, Add #define EXTRUDER_DESIGN R3 in varaiants files for Zaribo, Bear, Bondtech extruder
 # 02 Sep 2020, 3d-gussner, Fix OLED display also for Prusa printers
+# 09 Sep 2020, 3d-gussner, Rebranding Caribou and new naming convention
 ################################################################################
 
 # Constants
@@ -53,19 +54,19 @@ BASE="1_75mm_$TYPE-$BOARD-E3Dv6full.h"
 BMGHeightDiff=-3 #Bondtech extruders are bit higher than stock one
 
 # Arrays
-declare -a CompanyArray=( "Zaribo" "Prusa" )
+declare -a CompanyArray=( "Caribou" "Prusa" )
 declare -a TypesArray=( "MK3" "MK3S" "MK25" "MK25S" )
 declare -a HeightsArray=( 220 320 420)
 declare -a ModArray=( "BE" "BM" "BMM" "BMH" "BMMH")
 #
 
-# Cleanup old Zaribo variants
-ls Zaribo*
+# Cleanup old Caribou variants
+ls Caribou*
 ls Prusa*
 echo " "
-echo "Existing Zaribo varaiants will be deleted. Press CRTL+C to stop"
+echo "Existing Caribou varaiants will be deleted. Press CRTL+C to stop"
 sleep 5
-rm Zaribo*
+rm Caribou*
 rm Prusa*
 
 ##### MK25/MK25S/MK3/MK3S Variants
@@ -82,13 +83,13 @@ for COMPANY in ${CompanyArray[@]}; do
 			exit 1
 		fi
 		BASE="1_75mm_$TYPE-$BOARD-E3Dv6full.h"
-		if [ $COMPANY == "Zaribo" ]; then
+		if [ $COMPANY == "Caribou" ]; then
 			declare -a HeightsArray=( 220 320 420)
 		elif [ $COMPANY == "Prusa" ]; then
 			declare -a HeightsArray=( 210 )
 		fi
 		for HEIGHT in ${HeightsArray[@]}; do
-			VARIANT="$COMPANY-$TYPE-$HEIGHT.h"
+			VARIANT="$COMPANY$HEIGHT-$TYPE.h"
 			#echo $COMPANY
 			#echo $BASE
 			#echo $TYPE
@@ -105,10 +106,10 @@ for COMPANY in ${CompanyArray[@]}; do
 			else
 				PRUSA_TYPE=$TYPE
 			fi
-			if [ $COMPANY == "Zaribo" ]; then
+			if [ $COMPANY == "Caribou" ]; then
 				# Modify printer name
-				sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Prusa i3 '$PRUSA_TYPE'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$HEIGHT'"/g' ${VARIANT}
-				# Enable Extruder_Design_R3 for Zaribo
+				sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Prusa i3 '$PRUSA_TYPE'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY$HEIGHT'-'$TYPE'"/g' ${VARIANT}
+				# Enable Extruder_Design_R3 for Caribou
 				sed -i -e "s/\/\/#define EXTRUDER_DESIGN_R3*/#define EXTRUDER_DESIGN_R3/g" ${VARIANT}
 				# Inverted Y-Motor only for MK3
 				if [ $BOARD == "EINSy10a" ]; then
@@ -140,14 +141,14 @@ for COMPANY in ${CompanyArray[@]}; do
 			echo "Unsupported controller"
 			exit 1
 		fi
-		if [ $COMPANY == "Zaribo" ]; then
+		if [ $COMPANY == "Caribou" ]; then
 			declare -a HeightsArray=( 220 320 420)
 		elif [ $COMPANY == "Prusa" ]; then
 			declare -a HeightsArray=( 210 )
 		fi
 		for HEIGHT in ${HeightsArray[@]}; do
-			BASE="$COMPANY-$TYPE-$HEIGHT.h"
-			VARIANT="$COMPANY-$TYPE-$MOD-$HEIGHT.h"
+			BASE="$COMPANY$HEIGHT-$TYPE.h"
+			VARIANT="$COMPANY$HEIGHT-$TYPE-$MOD.h"
 			BMGHEIGHT=$(( $HEIGHT + $BMGHeightDiff ))
 			#echo $BASE
 			#echo $TYPE
@@ -156,8 +157,8 @@ for COMPANY in ${CompanyArray[@]}; do
 			echo $VARIANT
 			# Modify printer name
 			cp ${BASE} ${VARIANT}
-			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
-			# Enable Extruder_Design_R3 for Zaribo
+			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY$HEIGHT'-'$TYPE'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY$HEIGHT'-'$TYPE'-'$MOD'"/g' ${VARIANT}
+			# Enable Extruder_Design_R3 for Caribou
 			sed -i -e "s/\/\/#define EXTRUDER_DESIGN_R3*/#define EXTRUDER_DESIGN_R3/g" ${VARIANT}
 			# Printer Height
 			sed -i -e "s/^#define Z_MAX_POS ${HEIGHT}*/#define Z_MAX_POS ${BMGHEIGHT}/g" ${VARIANT}
@@ -200,21 +201,21 @@ for COMPANY in ${CompanyArray[@]}; do
 			echo "Unsupported controller"
 			exit 1
 		fi
-		if [ $COMPANY == "Zaribo" ]; then
+		if [ $COMPANY == "Caribou" ]; then
 			declare -a HeightsArray=( 220 320 420)
 		elif [ $COMPANY == "Prusa" ]; then
 			declare -a HeightsArray=( 210 )
 		fi
 		for HEIGHT in ${HeightsArray[@]}; do
-			BASE="$COMPANY-$TYPE-$BASE_MOD-$HEIGHT.h"
-			VARIANT="$COMPANY-$TYPE-$MOD-$HEIGHT.h"
+			BASE="$COMPANY$HEIGHT-$TYPE-$BASE_MOD.h"
+			VARIANT="$COMPANY$HEIGHT-$TYPE-$MOD.h"
 			#echo $BASE
 			#echo $TYPE
 			#echo $HEIGHT
 			echo $VARIANT
 			cp ${BASE} ${VARIANT}
 			# Modify printer name
-			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
+			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY$HEIGHT'-'$TYPE'-'$BASE_MOD'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY$HEIGHT'-'$TYPE'-'$MOD'"/g' ${VARIANT}
 			# Hotend Type 
 			sed -i -e 's/#define NOZZLE_TYPE "E3Dv6full"*/#define NOZZLE_TYPE "Mosquito"/' ${VARIANT}
 			# Enable Bondtech Mosquito MMU settings
@@ -240,21 +241,21 @@ for COMPANY in ${CompanyArray[@]}; do
 			echo "Unsupported controller"
 			exit 1
 		fi
-		if [ $COMPANY == "Zaribo" ]; then
+		if [ $COMPANY == "Caribou" ]; then
 			declare -a HeightsArray=( 220 320 420)
 		elif [ $COMPANY == "Prusa" ]; then
 			declare -a HeightsArray=( 210 )
 		fi
 		for HEIGHT in ${HeightsArray[@]}; do
-			BASE="$COMPANY-$TYPE-$BASE_MOD-$HEIGHT.h"
-			VARIANT="$COMPANY-$TYPE-$MOD-$HEIGHT.h"
+			BASE="$COMPANY$HEIGHT-$TYPE-$BASE_MOD.h"
+			VARIANT="$COMPANY$HEIGHT-$TYPE-$MOD.h"
 			#echo $BASE
 			#echo $TYPE
 			#echo $HEIGHT
 			echo $VARIANT
 			cp ${BASE} ${VARIANT}
 			# Modify printer name
-			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
+			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY$HEIGHT'-'$TYPE'-'$BASE_MOD'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY$HEIGHT'-'$TYPE'-'$MOD'"/g' ${VARIANT}
 			# Enable Slice High Temperature Thermistor
 			sed -i -e "s/\/\/#define SLICE_HT_EXTRUDER*/#define SLICE_HT_EXTRUDER/g" ${VARIANT}
 			# Change mintemp for Slice High Temperature Thermistor
@@ -274,15 +275,15 @@ for TYPE in ${BMQArray[@]}; do
 		exit 1
 	fi
 	for HEIGHT in ${HeightsArray[@]}; do
-		BASE="COMPANY-$TYPE-$BASE_MOD-$HEIGHT.h"
-		VARIANT="COMPANY-$TYPE-$MOD-$HEIGHT.h"
+		BASE="$COMPANY$HEIGHT-$TYPE-$BASE_MOD.h"
+		VARIANT="$COMPANY$HEIGHT-$TYPE-$MOD.h"
 		#echo $BASE
 		#echo $TYPE
 		#echo $HEIGHT
 		echo $VARIANT
 		cp ${BASE} ${VARIANT}
 		# Modify printer name
-		sed -i -e 's/^#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "Zaribo '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
+		sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$Caribou$HEIGHT'-'$TYPE'-'$BASE_MOD'"*/#define CUSTOM_MENDEL_NAME "Caribou'$HEIGHT'-'$TYPE'-'$MOD'"/g' ${VARIANT}
 		# Enable Slice High Temperature Thermistor
 		sed -i -e "s/\/\/#define SLICE_HT_EXTRUDER*/#define SLICE_HT_EXTRUDER/g" ${VARIANT}
 		# Change mintemp for Slice High Temperature Thermistor
@@ -306,21 +307,21 @@ for COMPANY in ${CompanyArray[@]}; do
 			echo "Unsupported controller"
 			exit 1
 		fi
-		if [ $COMPANY == "Zaribo" ]; then
+		if [ $COMPANY == "Caribou" ]; then
 			declare -a HeightsArray=( 220 320 420)
 		elif [ $COMPANY == "Prusa" ]; then
 			declare -a HeightsArray=( 210 )
 		fi
 		for HEIGHT in ${HeightsArray[@]}; do
-			BASE="$COMPANY-$TYPE-$BASE_MOD-$HEIGHT.h"
-			VARIANT="$COMPANY-$TYPE-$MOD-$HEIGHT.h"
+			BASE="$COMPANY$HEIGHT-$TYPE-$BASE_MOD.h"
+			VARIANT="$COMPANY$HEIGHT-$TYPE-$MOD.h"
 			#echo $BASE
 			#echo $TYPE
 			#echo $HEIGHT
 			echo $VARIANT
 			cp ${BASE} ${VARIANT}
 			# Modify printer name
-			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
+			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY$HEIGHT'-'$TYPE'-'$BASE_MOD'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY$HEIGHT'-'$TYPE'-'$MOD'"/g' ${VARIANT}
 			# Hotend Type 
 			sed -i -e 's/#define NOZZLE_TYPE "Mosquito"*/#define NOZZLE_TYPE "Mosquito Magnum"/' ${VARIANT}
 			# Enable Bondtech Mosquito MMU settings
@@ -346,20 +347,20 @@ for COMPANY in ${CompanyArray[@]}; do
 			echo "Unsupported controller"
 			exit 1
 		fi
-		if [ $COMPANY == "Zaribo" ]; then
+		if [ $COMPANY == "Caribou" ]; then
 			declare -a HeightsArray=( 220 320 420)
 		elif [ $COMPANY == "Prusa" ]; then
 			declare -a HeightsArray=( 210 )
 		fi
 		for HEIGHT in ${HeightsArray[@]}; do
-			BASE="$COMPANY-$TYPE-$BASE_MOD-$HEIGHT.h"
-			VARIANT="$COMPANY-$TYPE-$MOD-$HEIGHT.h"
+			BASE="$COMPANY$HEIGHT-$TYPE-$BASE_MOD.h"
+			VARIANT="$COMPANY$HEIGHT-$TYPE-$MOD.h"
 			#echo $BASE
 			#echo $TYPE
 			#echo $HEIGHT
 			echo $VARIANT
 			cp ${BASE} ${VARIANT}
-			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$BASE_MOD'-'$HEIGHT'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY' '$TYPE'-'$MOD'-'$HEIGHT'"/g' ${VARIANT}
+			sed -i -e 's/^#define CUSTOM_MENDEL_NAME "'$COMPANY$HEIGHT'-'$TYPE'-'$BASE_MOD'"*/#define CUSTOM_MENDEL_NAME "'$COMPANY$HEIGHT'-'$TYPE'-'$MOD'"/g' ${VARIANT}
 			# Enable Slice High Temperature Thermistor
 			sed -i -e "s/\/\/#define SLICE_HT_EXTRUDER*/#define SLICE_HT_EXTRUDER/g" ${VARIANT}
 			# Change mintemp for Slice High Temperature Thermistor
