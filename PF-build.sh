@@ -136,6 +136,9 @@
 #                          After compiling All multilanguage vairants it makes it easier to find missing or unused transltions.
 # 12 May 2020, DRracer   , Cleanup double MK2/s MK25/s `not_tran` and `not_used` files
 # 13 May 2020, leptun    , If cleanup files do not exist don't try to.
+# 10 Sep 2020, 3d-gussner, Rebranding Caribou3d
+#                          Cleanup Prusa-Firmware-build folder every time
+#                          start sort.sh when ALL languages are selected
 #
 #### Start check if OSTYPE is supported
 OS_FOUND=$( command -v uname)
@@ -455,7 +458,7 @@ if [ -z "$1" ] ; then
 	PS3="Select a variant: "
 	while IFS= read -r -d $'\0' f; do
 		options[i++]="$f"
-	done < <(find Firmware/variants/ -maxdepth 1 -type f -name "*-???.h" -print0 )
+	done < <(find Firmware/variants/ -maxdepth 1 -type f -name "*-MK*.h" -print0 )
 	select opt in "${options[@]}" "All" "Quit"; do
 		case $opt in
 			*.h)
@@ -465,6 +468,7 @@ if [ -z "$1" ] ; then
 				;;
 			"All")
 				VARIANT="All"
+				ALL_VARIANTS="All"
 				VARIANTS=${options[*]}
 				break
 				;;
@@ -559,7 +563,9 @@ do
 		echo "FW_COMMIT in Configuration.h is identical to current git commit number"
 	else
 		echo "$(tput setaf 5)FW_COMMIT $BUILD in Configuration.h is DIFFERENT to current git commit number $GIT_COMMIT_NUMBER. To cancel this process press CRTL+C and update the FW_COMMIT value.$(tput sgr0)"
-		 read -t 2 -p "Press Enter to continue..."
+		if [ -z "$ALL_VARIANTS" ]; then
+			read -t 2 -p "Press Enter to continue..."
+		fi
 	fi
 	# Check if the motherboard is an EINSY and if so only one hex file will generated
 	MOTHERBOARD=$(grep --max-count=1 "\bMOTHERBOARD\b" $SCRIPT_PATH/Firmware/variants/$VARIANT.h | sed -e's/  */ /g' |cut -d ' ' -f3)
@@ -617,14 +623,18 @@ do
 			echo "$i"
 			ls -1 $SCRIPT_PATH/../$OUTPUT_FOLDER/FW$FW-$VARIANT-Build$BUILD-$MULTI_CHECK.hex | xargs -n1 basename
 			echo "$(tput setaf 6)This hex file to be compiled already exists! To cancel this process press CRTL+C and rename existing hex file.$(tput sgr 0)"
-			read -t 10 -p "Press Enter to continue..."
+			if [ -z "$ALL_VARIANTS" ]; then
+				read -t 10 -p "Press Enter to continue..."
+			fi
 		fi
 	done
 	if [[ -f "$SCRIPT_PATH/../$OUTPUT_FOLDER/FW$FW-$VARIANT-Build$BUILD-EN.hex"  &&  "$LANGUAGES" == "EN_ONLY" ]]; then
 		echo ""
 		ls -1 $SCRIPT_PATH/../$OUTPUT_FOLDER/FW$FW-$VARIANT-Build$BUILD-EN.hex | xargs -n1 basename
 		echo "$(tput setaf 6)This hex file to be compiled already exists! To cancel this process press CRTL+C and rename existing hex file.$(tput sgr 0)"
-		read -t 10 -p "Press Enter to continue..."
+		if [ -z "$ALL_VARIANTS" ]; then
+			read -t 10 -p "Press Enter to continue..."
+		fi
 	fi
 #	if [[ -f "$SCRIPT_PATH/../$OUTPUT_FOLDER/FW$FW-$VARIANT-Build$BUILD.zip"  &&  "$LANGUAGES" == "ALL" ]]; then
 #		echo ""
@@ -650,7 +660,9 @@ do
 		cp -f $SCRIPT_PATH/Firmware/variants/$VARIANT.h $SCRIPT_PATH/Firmware/Configuration_prusa.h || exit 28
 	else
 		echo "$(tput setaf 6)Configuration_prusa.h already exist it will be overwritten in 10 seconds by the chosen variant.$(tput sgr 0)"
-		read -t 10 -p "Press Enter to continue..."
+		if [ -z "$ALL_VARIANTS" ]; then
+			read -t 10 -p "Press Enter to continue..."
+		fi
 		cp -f $SCRIPT_PATH/Firmware/variants/$VARIANT.h $SCRIPT_PATH/Firmware/Configuration_prusa.h || exit 28
 	fi
 
@@ -666,7 +678,7 @@ do
 
 	# Branding
 	export SCRIPT_PATH=$SCRIPT_PATH
-	$SCRIPT_PATH/branding_Zaribo.sh
+	$SCRIPT_PATH/branding_Caribou.sh
 	
 	#Prepare english only or multilanguage version to be build
 	if [ $LANGUAGES == "ALL" ]; then
@@ -699,13 +711,14 @@ do
 	echo "Start to build Prusa Firmware ..."
 	echo "Using variant $VARIANT$(tput setaf 3)"
 	#sleep 2
+	#clean Prusa-Firmware-build folder
+	rm -r $SCRIPT_PATH/../Prusa-Firmware-build/*
 	#$BUILD_ENV_PATH/arduino-builder -dump-prefs -debug-level 10 -compile -hardware $ARDUINO/hardware -hardware $ARDUINO/portable/packages -tools $ARDUINO/tools-builder -tools $ARDUINO/hardware/tools/avr -tools $ARDUINO/portable/packages -built-in-libraries $ARDUINO/libraries -libraries $ARDUINO/portable/sketchbook/libraries -fqbn=$BOARD_PACKAGE_NAME:avr:$BOARD -build-path=$BUILD_PATH -warnings=all $SCRIPT_PATH/Firmware/Firmware.ino || exit 14
 	$BUILD_ENV_PATH/arduino-builder -compile -hardware $ARDUINO/hardware -hardware $ARDUINO/portable/packages -tools $ARDUINO/tools-builder -tools $ARDUINO/hardware/tools/avr -tools $ARDUINO/portable/packages -built-in-libraries $ARDUINO/libraries -libraries $ARDUINO/portable/sketchbook/libraries -fqbn=$BOARD_PACKAGE_NAME:avr:$BOARD -build-path=$BUILD_PATH -warnings=all $SCRIPT_PATH/Firmware/Firmware.ino || exit 14
 	echo "$(tput sgr 0)"
 
 	if [ $LANGUAGES ==  "ALL" ]; then
 		echo "$(tput setaf 2)"
-
 		echo "Building multi language firmware" $MULTI_LANGUAGE_CHECK
 		echo "$(tput sgr 0)"
 		#sleep 2
@@ -717,7 +730,9 @@ do
 		if [ -f "lang_en.tmp" ]; then
 			echo ""
 			echo "$(tput setaf 6)Previous lang build files already exist these will be cleaned up in 10 seconds.$(tput sgr 0)"
-			read -t 10 -p "Press Enter to continue..."
+			if [ -z "$ALL_VARIANTS" ]; then
+				read -t 10 -p "Press Enter to continue..."
+			fi
 			echo "$(tput setaf 3)"
 			./lang-clean.sh
 			echo "$(tput sgr 0)"
@@ -725,7 +740,9 @@ do
 		if [ -f "progmem.out" ]; then
 			echo ""
 			echo "$(tput setaf 6)Previous firmware build files already exist these will be cleaned up in 10 seconds.$(tput sgr 0)"
-			read -t 10 -p "Press Enter to continue..."
+			if [ -z "$ALL_VARIANTS" ]; then
+				read -t 10 -p "Press Enter to continue..."
+			fi
 			echo "$(tput setaf 3)"
 			./fw-clean.sh
 			echo "$(tput sgr 0)"
@@ -798,9 +815,12 @@ do
 	sed -i -- "s/^#define LANG_MODE *0/#define LANG_MODE              1/g" $SCRIPT_PATH/Firmware/config.h
 	#sleep 5
 	# debranding
-	$SCRIPT_PATH/debranding_Zaribo.sh
+	$SCRIPT_PATH/debranding_Caribou.sh
 done
-
+# Sort hexfiles only when build ALL is selected
+if [ $ALL_VARIANTS == "All" ]; then
+	$SCRIPT_PATH/sort.sh ../$OUTPUT_FOLDER/../ ../$OUTPUT_FOLDER/../../FW$FW-Build$BUILD-sorted/
+fi
 # Switch to hex path and list build files
 cd $SCRIPT_PATH
 cd ..
